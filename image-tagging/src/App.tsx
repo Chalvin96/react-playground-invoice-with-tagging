@@ -116,6 +116,7 @@ const App: React.FC = () => {
             onImageClick={(x, y) => handleAddTag(imageItem.id, x, y)}
             startIndex={imageItem.startIndex}
             tags={imageItem.tags}
+            onDragTag={handleDragTag}
           />
         ))}
       </div>

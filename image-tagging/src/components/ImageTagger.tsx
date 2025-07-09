@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import ItemRow from '@/components/ItemRow';
+import Tag from './Tag';
 
 interface ImageTaggerProps {
     imageBase64: string;
@@ -9,34 +10,47 @@ interface ImageTaggerProps {
     startIndex: number;
     tags: any;
     onImageClick: (x: number, y: number) => void;
+    onDragTag: (id: string, x: number, y: number) => void;
 }
 
-const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, onDelete, startIndex, tags, onImageClick }) => {
+const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, onDelete, startIndex, tags, onImageClick, onDragTag }) => {
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!containerRef.current) return;
+        const rect = containerRef.current.getBoundingClientRect();
+        const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
+        const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
+        onImageClick(xPercent, yPercent);
+    };
 
     return (
         <div className="w-full bg-gray-200 border border-gray-300 p-4 rounded-lg ">
             <div className="flex flex-row items-start">
-                <div className="flex w-full items-center-safe">
+                <div ref={containerRef} className="relative flex w-full items-center-safe" onClick={handleClick}>
                     <AspectRatio ratio={16 / 9}>
                         <img
                             src={imageBase64}
                             alt="Uploaded"
-                            className="h-full object-cover rounded-lg max-h-100"
+                            className="h-full w-full object-cover rounded-lg"
                         />
                     </AspectRatio>
-                    {tags.map((tag, index: number) => (
-                        <div>Tehee {tag.x} {tag.y} {startIndex + index}</div>
+                    {tags.map((tag: any, i: number) => (
+                        <Tag
+                            key={tag.id}
+                            id={tag.id}
+                            x={tag.x}
+                            y={tag.y}
+                            index={startIndex + i}
+                            containerRef={containerRef}
+                            onDrag={onDragTag}
+                        />
                     ))}
                 </div>
-                <Button onClick={() => onImageClick(1, 1)} />
-                <Button onClick={() => onImageClick(10, 10)} />
-                <Button onClick={() => onImageClick(20, 20)} />
                 <div className='flex w-full flex-col'>
-                    <ItemRow />
-                    <ItemRow />
-                    <ItemRow />
+                    {tags.map((tag: any) => (<ItemRow key={tag.id}/>))}
                 </div>
-                <Button onClick={() => onDelete()} />
+                <Button onClick={onDelete}>Delete</Button>
             </div>
         </div>
     );
