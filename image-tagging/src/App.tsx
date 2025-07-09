@@ -1,16 +1,51 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { Button } from "@/components/ui/button";
 import ImageTagger from "@/components/ImageTagger";
 import { v4 as uuidv4 } from 'uuid';
 
-interface ImageTaggerComponent {
+
+
+
+interface ImageTagItem {
+  id: string;
+  x: number;
+  y: number;
+  baseImageId: string;
+}
+
+interface ImageItem {
   id: string;
   imageBase64: string;
+  startIndex?: string;
+  tags?: ImageTagItem[];
 }
 
 const App: React.FC = () => {
-  const [imageTaggerComponents, setImageTaggerComponents] = useState<ImageTaggerComponent[]>([]);
+  const [imageItems, setImageItems] = useState<ImageItem[]>([]);
+  const [imageTagItems, setImageTagItems] = useState<ImageTagItem[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAddTag = (baseImageId: string, x: number, y: number) => {
+    const newImageTagItem: ImageTagItem = {
+      id: uuidv4(),
+      x,
+      y,
+      baseImageId
+    };
+    setImageTagItems(prev => [...prev, newImageTagItem])
+  };
+
+  const handleRemoveTag = (id: string) => {
+    setImageTagItems(prev => prev.filter(item => item.id != id))
+  };
+
+  const handleDragTag = (id: string, x: number, y: number) => {
+    setImageTagItems(prevItems =>
+      prevItems.map(item =>
+        item.id === id ? { ...item, x, y } : item
+      )
+    );
+  }
 
   const handleAddImage = (): void => {
     fileInputRef.current?.click();
@@ -23,12 +58,12 @@ const App: React.FC = () => {
       reader.onload = (e) => {
         const result = e.target?.result as string;
         const id = uuidv4();
-        const newComponent: ImageTaggerComponent = {
+        const newImageItem: ImageItem = {
           id,
           imageBase64: result
         };
 
-        setImageTaggerComponents(prev => [...prev, newComponent]);
+        setImageItems(prev => [...prev, newImageItem]);
       };
       reader.readAsDataURL(file);
     }
@@ -38,8 +73,27 @@ const App: React.FC = () => {
   };
 
   const handleDeleteImage = (id: string): void => {
-    setImageTaggerComponents(prev => prev.filter(item => item.id !== id));
+    setImageItems(prev => prev.filter(item => item.id !== id));
   };
+
+
+  const imageItemsWithStartIndex = useMemo(() => {
+    let currentIndex = 1;
+
+    return imageItems.map(imageItem => {
+      const filteredImageTagItems = imageTagItems.filter(
+        tagItem => tagItem.baseImageId === imageItem.id
+      );
+      const startIndex = currentIndex;
+      currentIndex += filteredImageTagItems.length;
+
+      return {
+        ...imageItem,
+        startIndex,
+        tags: filteredImageTagItems
+      };
+    });
+  }, [imageItems, imageTagItems]);
 
   return (
     <div className="relative h-screen w-screen">
@@ -54,11 +108,14 @@ const App: React.FC = () => {
 
       {/* Main content area */}
       <div className="h-full w-full p-6 space-y-4 overflow-y-auto">
-        {imageTaggerComponents.map(item => (
+        {imageItemsWithStartIndex.map(imageItem => (
           <ImageTagger
-            key={item.id}
-            imageBase64={item.imageBase64}
-            onDelete={() => handleDeleteImage(item.id)}
+            key={imageItem.id}
+            imageBase64={imageItem.imageBase64}
+            onDelete={() => handleDeleteImage(imageItem.id)}
+            onImageClick={(x, y) => handleAddTag(imageItem.id, x, y)}
+            startIndex={imageItem.startIndex}
+            tags={imageItem.tags}
           />
         ))}
       </div>
