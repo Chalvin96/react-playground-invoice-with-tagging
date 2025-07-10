@@ -1,17 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
+import type { ItemData } from '../hooks/useItems';
 
 interface ItemRowProps {
     tagIndex: number;
     onDelete: () => void;
     onUpdate: (data: ItemData) => void;
     initialData?: ItemData;
-}
-
-interface ItemData {
-    name: string;
-    quantity: number;
-    unitPrice: number;
 }
 
 const ItemRow: React.FC<ItemRowProps> = ({ tagIndex, onDelete, onUpdate, initialData }) => {
