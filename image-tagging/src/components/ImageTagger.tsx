@@ -10,9 +10,12 @@ interface ImageTaggerProps {
     tags: any;
     onImageClick: (x: number, y: number) => void;
     onDragTag: (id: string, x: number, y: number) => void;
+    onUpdateItemData: (tagId: string, data: any) => void;
+    onDeleteTagAndItem: (tagId: string) => void;
+    itemData: Record<string, any>;
 }
 
-const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, onDelete, tags, onImageClick, onDragTag }) => {
+const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, onDelete, tags, onImageClick, onDragTag, onUpdateItemData, onDeleteTagAndItem, itemData }) => {
     const containerRef = useRef<HTMLDivElement>(null);
 
     const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -59,8 +62,16 @@ const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, onDelete, tags, 
                         />
                     ))}
                 </div>
-                <div className='flex w-full flex-col'>
-                    {tags.map((tag: any) => (<ItemRow key={tag.id} />))}
+                <div className='flex w-full flex-col gap-2'>
+                    {tags.map((tag: any) => (
+                        <ItemRow
+                            key={tag.id}
+                            tagIndex={tag.index}
+                            onDelete={() => onDeleteTagAndItem(tag.id)}
+                            onUpdate={(data) => onUpdateItemData(tag.id, data)}
+                            initialData={itemData[tag.id]}
+                        />
+                    ))}
                 </div>
                 <Button onClick={onDelete}>Delete</Button>
             </div>

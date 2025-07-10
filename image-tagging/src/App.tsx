@@ -12,6 +12,12 @@ interface ImageTagItem {
   index: number;
 }
 
+interface ItemData {
+  name: string;
+  quantity: number;
+  unitPrice: number;
+}
+
 interface ImageItem {
   id: string;
   imageBase64: string;
@@ -23,6 +29,7 @@ interface ImageItem {
 const App: React.FC = () => {
   const [imageItems, setImageItems] = useState<ImageItem[]>([]);
   const [imageTagItems, setImageTagItems] = useState<ImageTagItem[]>([]);
+  const [itemData, setItemData] = useState<Record<string, ItemData>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const reindexTags = useCallback((tags: ImageTagItem[]): ImageTagItem[] => {
@@ -52,11 +59,26 @@ const App: React.FC = () => {
         x,
         y,
         baseImageId,
-        index: maxIndex + 1 
+        index: maxIndex + 1
       };
 
       const allTags = [...prev, newImageTagItem];
-      return reindexTags(allTags);
+      const reindexedTags = reindexTags(allTags);
+
+      // Add item data for the new tag
+      const newTag = reindexedTags.find(tag => tag.id === newImageTagItem.id);
+      if (newTag) {
+        setItemData(prev => ({
+          ...prev,
+          [newTag.id]: {
+            name: '',
+            quantity: 0,
+            unitPrice: 0
+          }
+        }));
+      }
+
+      return reindexedTags;
     });
   }, [reindexTags]);
 
@@ -108,6 +130,38 @@ const App: React.FC = () => {
       const filteredTags = prev.filter(tag => tag.baseImageId !== id);
       return reindexTags(filteredTags);
     });
+    // Remove item data for tags on this image
+    setItemData(prev => {
+      const newItemData = { ...prev };
+      Object.keys(newItemData).forEach(tagId => {
+        const tag = imageTagItems.find(t => t.id === tagId);
+        if (tag && tag.baseImageId === id) {
+          delete newItemData[tagId];
+        }
+      });
+      return newItemData;
+    });
+  }, [reindexTags, imageTagItems]);
+
+  const handleUpdateItemData = useCallback((tagId: string, data: ItemData) => {
+    setItemData(prev => ({
+      ...prev,
+      [tagId]: data
+    }));
+  }, []);
+
+  const handleDeleteTagAndItem = useCallback((tagId: string) => {
+    // Remove the tag
+    setImageTagItems(prev => {
+      const filteredTags = prev.filter(item => item.id !== tagId);
+      return reindexTags(filteredTags);
+    });
+    // Remove the item data
+    setItemData(prev => {
+      const newItemData = { ...prev };
+      delete newItemData[tagId];
+      return newItemData;
+    });
   }, [reindexTags]);
 
 
@@ -145,6 +199,9 @@ const App: React.FC = () => {
             onImageClick={(x, y) => handleAddTag(imageItem.id, x, y)}
             tags={imageItem.tags}
             onDragTag={handleDragTag}
+            onUpdateItemData={handleUpdateItemData}
+            onDeleteTagAndItem={handleDeleteTagAndItem}
+            itemData={itemData}
           />
         ))}
       </div>
