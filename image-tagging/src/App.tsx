@@ -22,6 +22,8 @@ interface ImageItem {
   id: string;
   imageBase64: string;
   timestamp: number;
+  title: string;
+  notes: string;
   startIndex?: string;
   tags?: ImageTagItem[];
 }
@@ -111,7 +113,9 @@ const App: React.FC = () => {
         const newImageItem: ImageItem = {
           id,
           imageBase64: result,
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          title: '',
+          notes: ''
         };
 
         setImageItems(prev => [...prev, newImageItem]);
@@ -164,6 +168,18 @@ const App: React.FC = () => {
     });
   }, [reindexTags]);
 
+  const handleUpdateImageTitle = useCallback((imageId: string, title: string) => {
+    setImageItems(prev => prev.map(item =>
+      item.id === imageId ? { ...item, title } : item
+    ));
+  }, []);
+
+  const handleUpdateImageNotes = useCallback((imageId: string, notes: string) => {
+    setImageItems(prev => prev.map(item =>
+      item.id === imageId ? { ...item, notes } : item
+    ));
+  }, []);
+
 
   const imageItemsWithTags = useMemo(() => {
     return imageItems.map(imageItem => {
@@ -179,7 +195,7 @@ const App: React.FC = () => {
   }, [imageItems, imageTagItems]);
 
   return (
-    <div className="relative h-screen w-screen">
+    <div className="min-h-screen flex flex-col w-full">
       {/* Hidden file input */}
       <input
         ref={fileInputRef}
@@ -190,28 +206,40 @@ const App: React.FC = () => {
       />
 
       {/* Main content area */}
-      <div className="h-full w-full p-6 space-y-4 overflow-y-auto">
+      <div className="flex-1 p-6 space-y-4 w-full">
         {imageItemsWithTags.map((imageItem) => (
           <ImageTagger
             key={imageItem.id}
             imageBase64={imageItem.imageBase64}
+            title={imageItem.title}
+            notes={imageItem.notes}
             onDelete={() => handleDeleteImage(imageItem.id)}
             onImageClick={(x, y) => handleAddTag(imageItem.id, x, y)}
             tags={imageItem.tags}
             onDragTag={handleDragTag}
             onUpdateItemData={handleUpdateItemData}
             onDeleteTagAndItem={handleDeleteTagAndItem}
+            onUpdateTitle={(title) => handleUpdateImageTitle(imageItem.id, title)}
+            onUpdateNotes={(notes) => handleUpdateImageNotes(imageItem.id, notes)}
             itemData={itemData}
           />
         ))}
       </div>
 
-      {/* Floating footer island */}
-      <div className="absolute bottom-6 left-6 right-6">
-        <div className="bg-white rounded-2xl shadow-lg border px-6 py-4">
-          <Button onClick={handleAddImage}>
-            Add Image
-          </Button>
+      {/* Bottom centered button */}
+      <div className="p-6 border-t bg-white">
+        <div className="flex items-center justify-center">
+          <div className="flex-1 max-w-xs">
+            <div className="h-px bg-gray-300"></div>
+          </div>
+          <div className="px-4">
+            <Button onClick={handleAddImage} className="px-8">
+              Add Image
+            </Button>
+          </div>
+          <div className="flex-1 max-w-xs">
+            <div className="h-px bg-gray-300"></div>
+          </div>
         </div>
       </div>
     </div>

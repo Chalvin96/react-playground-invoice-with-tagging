@@ -1,21 +1,24 @@
 import React, { useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { AspectRatio } from '@/components/ui/aspect-ratio';
 import ItemRow from '@/components/ItemRow';
 import Tag from './Tag';
 
 interface ImageTaggerProps {
     imageBase64: string;
+    title: string;
+    notes: string;
     onDelete: () => void;
     tags: any;
     onImageClick: (x: number, y: number) => void;
     onDragTag: (id: string, x: number, y: number) => void;
     onUpdateItemData: (tagId: string, data: any) => void;
     onDeleteTagAndItem: (tagId: string) => void;
+    onUpdateTitle: (title: string) => void;
+    onUpdateNotes: (notes: string) => void;
     itemData: Record<string, any>;
 }
 
-const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, onDelete, tags, onImageClick, onDragTag, onUpdateItemData, onDeleteTagAndItem, itemData }) => {
+const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, title, notes, onDelete, tags, onImageClick, onDragTag, onUpdateItemData, onDeleteTagAndItem, onUpdateTitle, onUpdateNotes, itemData }) => {
     const containerRef = useRef<HTMLDivElement>(null);
 
     const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -40,40 +43,92 @@ const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, onDelete, tags, 
     };
 
     return (
-        <div className="w-full bg-gray-200 border border-gray-300 p-4 rounded-lg ">
-            <div className="flex flex-row items-start">
-                <div ref={containerRef} className="relative flex w-full items-center-safe" onClick={handleClick}>
-                    <AspectRatio ratio={16 / 9}>
-                        <img
-                            src={imageBase64}
-                            alt="Uploaded"
-                            className="h-full w-full object-cover rounded-lg"
-                        />
-                    </AspectRatio>
-                    {tags.map((tag: any) => (
-                        <Tag
-                            key={tag.id}
-                            id={tag.id}
-                            x={tag.x}
-                            y={tag.y}
-                            index={tag.index}
-                            containerRef={containerRef}
-                            onDrag={onDragTag}
-                        />
-                    ))}
+        <div className="w-full bg-gray-200 border border-gray-300 p-4 rounded-lg space-y-4">
+            {/* Title Field */}
+            <input
+                type="text"
+                placeholder="Image Title"
+                value={title}
+                onChange={(e) => onUpdateTitle(e.target.value)}
+                className="min-w-[100px] w-fit px-2 py-1 border-b border-gray-300 focus:outline-none focus:border-blue-500 font-semibold text-lg bg-transparent"
+            />
+
+            {/* Image and Notes Section */}
+            <div className="flex gap-4">
+                {/* Image Container */}
+                <div className="w-[600px] h-[400px] flex-shrink-0">
+                    <div ref={containerRef} className="relative w-full h-full" onClick={handleClick}>
+                        <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden">
+                            <img
+                                src={imageBase64}
+                                alt="Uploaded"
+                                className="max-w-full max-h-full object-contain"
+                            />
+                        </div>
+                        {tags.map((tag: any) => (
+                            <Tag
+                                key={tag.id}
+                                id={tag.id}
+                                x={tag.x}
+                                y={tag.y}
+                                index={tag.index}
+                                containerRef={containerRef}
+                                onDrag={onDragTag}
+                            />
+                        ))}
+                    </div>
                 </div>
-                <div className='flex w-full flex-col gap-2'>
-                    {tags.map((tag: any) => (
-                        <ItemRow
-                            key={tag.id}
-                            tagIndex={tag.index}
-                            onDelete={() => onDeleteTagAndItem(tag.id)}
-                            onUpdate={(data) => onUpdateItemData(tag.id, data)}
-                            initialData={itemData[tag.id]}
-                        />
-                    ))}
+
+                {/* Notes Field */}
+                <div className="flex-1">
+                    <textarea
+                        placeholder="Notes..."
+                        value={notes}
+                        onChange={(e) => onUpdateNotes(e.target.value)}
+                        className="min-w-[100px] w-fit h-fit min-h-[50px] px-2 py-1 pb-0 border-b border-gray-300 focus:outline-none focus:border-blue-500 resize-none bg-transparent"
+                    />
                 </div>
-                <Button onClick={onDelete}>Delete</Button>
+            </div>
+
+            {/* Items Section */}
+            <div className="space-y-2">
+                {tags.length > 0 ? (
+                    <>
+                        {/* Header */}
+                        <div className="flex items-center gap-2 p-2 bg-white border rounded-lg font-semibold text-gray-700">
+                            <div className="w-8 h-8 bg-gray-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                                #
+                            </div>
+                            <div className="flex-1">Item Name</div>
+                            <div className="w-20">Qty</div>
+                            <div className="w-24">Unit Price</div>
+                            <div className="w-24">Total Price</div>
+                            <div className="w-8"></div>
+                        </div>
+
+                        {/* Item Rows */}
+                        {tags.map((tag: any) => (
+                            <ItemRow
+                                key={tag.id}
+                                tagIndex={tag.index}
+                                onDelete={() => onDeleteTagAndItem(tag.id)}
+                                onUpdate={(data) => onUpdateItemData(tag.id, data)}
+                                initialData={itemData[tag.id]}
+                            />
+                        ))}
+                    </>
+                ) : (
+                    <div className="text-center py-8 text-gray-500">
+                        No Item Yet
+                    </div>
+                )}
+            </div>
+
+            {/* Delete Button */}
+            <div className="flex justify-end">
+                <Button onClick={onDelete} variant="destructive">
+                    Delete Image
+                </Button>
             </div>
         </div>
     );
