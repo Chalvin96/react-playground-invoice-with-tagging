@@ -1,9 +1,7 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import ImageTagger from "@/components/ImageTagger";
 import { v4 as uuidv4 } from 'uuid';
-
-
 
 
 interface ImageTagItem {
@@ -27,8 +25,7 @@ const App: React.FC = () => {
   const [imageTagItems, setImageTagItems] = useState<ImageTagItem[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Helper function to reindex all tags to maintain continuous numbering
-  const reindexTags = (tags: ImageTagItem[]): ImageTagItem[] => {
+  const reindexTags = useCallback((tags: ImageTagItem[]): ImageTagItem[] => {
     return tags
       .sort((a, b) => {
         // Sort by image timestamp first, then by original index
@@ -43,11 +40,10 @@ const App: React.FC = () => {
         ...tag,
         index: newIndex + 1
       }));
-  };
+  }, [imageItems]);
 
-  const handleAddTag = (baseImageId: string, x: number, y: number) => {
+  const handleAddTag = useCallback((baseImageId: string, x: number, y: number) => {
     setImageTagItems(prev => {
-      // Find the highest index for tags on this image
       const tagsForImage = prev.filter(tag => tag.baseImageId === baseImageId);
       const maxIndex = tagsForImage.length > 0 ? Math.max(...tagsForImage.map(tag => tag.index)) : 0;
 
@@ -56,34 +52,34 @@ const App: React.FC = () => {
         x,
         y,
         baseImageId,
-        index: maxIndex + 1 // Temporary index higher than existing tags
+        index: maxIndex + 1 
       };
 
       const allTags = [...prev, newImageTagItem];
       return reindexTags(allTags);
     });
-  };
+  }, [reindexTags]);
 
-  const handleRemoveTag = (id: string) => {
+  const handleRemoveTag = useCallback((id: string) => {
     setImageTagItems(prev => {
       const filteredTags = prev.filter(item => item.id !== id);
       return reindexTags(filteredTags);
     });
-  };
+  }, [reindexTags]);
 
-  const handleDragTag = (id: string, x: number, y: number) => {
+  const handleDragTag = useCallback((id: string, x: number, y: number) => {
     setImageTagItems(prevItems =>
       prevItems.map(item =>
         item.id === id ? { ...item, x, y } : item
       )
     );
-  }
+  }, []);
 
-  const handleAddImage = (): void => {
+  const handleAddImage = useCallback((): void => {
     fileInputRef.current?.click();
-  };
+  }, []);
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleFileUpload = useCallback((event: React.ChangeEvent<HTMLInputElement>): void => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -103,16 +99,16 @@ const App: React.FC = () => {
 
     // Reset the input value to allow uploading the same file again
     event.target.value = '';
-  };
+  }, []);
 
-  const handleDeleteImage = (id: string): void => {
+  const handleDeleteImage = useCallback((id: string): void => {
     setImageItems(prev => prev.filter(item => item.id !== id));
     // Also remove all tags associated with this image and recalculate indices
     setImageTagItems(prev => {
       const filteredTags = prev.filter(tag => tag.baseImageId !== id);
       return reindexTags(filteredTags);
     });
-  };
+  }, [reindexTags]);
 
 
   const imageItemsWithTags = useMemo(() => {
