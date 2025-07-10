@@ -7,13 +7,12 @@ import Tag from './Tag';
 interface ImageTaggerProps {
     imageBase64: string;
     onDelete: () => void;
-    startIndex: number;
     tags: any;
     onImageClick: (x: number, y: number) => void;
     onDragTag: (id: string, x: number, y: number) => void;
 }
 
-const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, onDelete, startIndex, tags, onImageClick, onDragTag }) => {
+const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, onDelete, tags, onImageClick, onDragTag }) => {
     const containerRef = useRef<HTMLDivElement>(null);
 
     const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -48,13 +47,13 @@ const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, onDelete, startI
                             className="h-full w-full object-cover rounded-lg"
                         />
                     </AspectRatio>
-                    {tags.map((tag: any, i: number) => (
+                    {tags.map((tag: any) => (
                         <Tag
                             key={tag.id}
                             id={tag.id}
                             x={tag.x}
                             y={tag.y}
-                            index={startIndex + i}
+                            index={tag.index}
                             containerRef={containerRef}
                             onDrag={onDragTag}
                         />
