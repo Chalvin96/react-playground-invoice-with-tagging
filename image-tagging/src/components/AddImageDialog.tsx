@@ -37,7 +37,7 @@ const AddImageDialog: React.FC<AddImageDialogProps> = ({ onAddImage, trigger }) 
         }
     };
 
-    const handleAddImage = () => {
+    const handleSaveImage = () => {
         if (selectedFile && previewUrl) {
             onAddImage(previewUrl, title);
             // Reset form
@@ -117,39 +117,39 @@ const AddImageDialog: React.FC<AddImageDialogProps> = ({ onAddImage, trigger }) 
                         />
                     </div>
 
-                              {/* Image Preview */}
-          {previewUrl && (
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-gray-700">Preview</Label>
-              <div className="w-full h-64 bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center shadow-sm">
-                <img
-                  src={previewUrl}
-                  alt="Preview"
-                  className="max-w-full max-h-full object-contain"
-                />
-              </div>
-            </div>
-          )}
+                    {/* Image Preview */}
+                    {previewUrl && (
+                        <div className="space-y-2">
+                            <Label className="text-sm font-medium text-gray-700">Preview</Label>
+                            <div className="w-full h-64 bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center shadow-sm">
+                                <img
+                                    src={previewUrl}
+                                    alt="Preview"
+                                    className="max-w-full max-h-full object-contain"
+                                />
+                            </div>
+                        </div>
+                    )}
                 </div>
 
-                        <DialogFooter>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleCancel}
-            className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
-          >
-            Cancel
-          </Button>
-          <Button
-            type="button"
-            onClick={handleAddImage}
-            disabled={!isFormValid}
-            className="bg-purple-600 hover:bg-purple-700 text-white"
-          >
-            Add Image
-          </Button>
-        </DialogFooter>
+                <DialogFooter>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleCancel}
+                        className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        type="button"
+                        onClick={handleSaveImage}
+                        disabled={!isFormValid}
+                        className="bg-purple-600 hover:bg-purple-700 text-white"
+                    >
+                        Add Image
+                    </Button>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
     );

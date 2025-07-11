@@ -44,7 +44,7 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
         }
     };
 
-    const handleEditImage = () => {
+    const handleSaveChanges = () => {
         const finalImageBase64 = previewUrl || currentImageBase64;
         onEditImage(finalImageBase64, currentTitle); // Keep the current title
         // Reset form
@@ -100,17 +100,17 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
 
                 <div className="space-y-6">
 
-                              {/* Current Image Preview */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700">Current Image</Label>
-            <div className="w-full h-40 bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center shadow-sm">
-              <img
-                src={currentImageBase64}
-                alt="Current"
-                className="max-w-full max-h-full object-contain"
-              />
-            </div>
-          </div>
+                    {/* Current Image Preview */}
+                    <div className="space-y-2">
+                        <Label className="text-sm font-medium text-gray-700">Current Image</Label>
+                        <div className="w-full h-40 bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center shadow-sm">
+                            <img
+                                src={currentImageBase64}
+                                alt="Current"
+                                className="max-w-full max-h-full object-contain"
+                            />
+                        </div>
+                    </div>
 
                     {/* File Selection for New Image */}
                     <div className="space-y-2">
@@ -125,19 +125,19 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
                         />
                     </div>
 
-                              {/* New Image Preview */}
-          {previewUrl && (
-            <div className="space-y-2">
-              <Label className="text-sm font-medium text-gray-700">New Image Preview</Label>
-              <div className="w-full h-40 bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center shadow-sm">
-                <img
-                  src={previewUrl}
-                  alt="New Preview"
-                  className="max-w-full max-h-full object-contain"
-                />
-              </div>
-            </div>
-          )}
+                    {/* New Image Preview */}
+                    {previewUrl && (
+                        <div className="space-y-2">
+                            <Label className="text-sm font-medium text-gray-700">New Image Preview</Label>
+                            <div className="w-full h-40 bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center shadow-sm">
+                                <img
+                                    src={previewUrl}
+                                    alt="New Preview"
+                                    className="max-w-full max-h-full object-contain"
+                                />
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <DialogFooter>
@@ -151,7 +151,7 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
                     </Button>
                     <Button
                         type="button"
-                        onClick={handleEditImage}
+                        onClick={handleSaveChanges}
                         disabled={!isFormValid}
                         className="bg-purple-600 hover:bg-purple-700 text-white"
                     >
