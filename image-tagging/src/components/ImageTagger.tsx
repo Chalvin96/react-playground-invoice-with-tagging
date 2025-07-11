@@ -2,16 +2,24 @@ import React, { useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import ItemsList from '@/components/ItemsList';
 import Tag from './Tag';
+import EditImageDialog from './EditImageDialog';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover';
+import { MoreHorizontal } from 'lucide-react';
 
 interface ImageTaggerProps {
     imageBase64: string;
     title: string;
     notes: string;
     onDelete: () => void;
+    onEdit: (imageBase64: string, title: string) => void;
     tags: any;
     onImageClick: (x: number, y: number) => void;
     onDragTag: (id: string, x: number, y: number) => void;
@@ -22,7 +30,7 @@ interface ImageTaggerProps {
     itemData: Record<string, any>;
 }
 
-const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, title, notes, onDelete, tags, onImageClick, onDragTag, onUpdateItemData, onDeleteTagAndItem, onUpdateTitle, onUpdateNotes, itemData }) => {
+const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, title, notes, onDelete, onEdit, tags, onImageClick, onDragTag, onUpdateItemData, onDeleteTagAndItem, onUpdateTitle, onUpdateNotes, itemData }) => {
     const containerRef = useRef<HTMLDivElement>(null);
 
     const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -46,7 +54,40 @@ const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, title, notes, on
     };
 
     return (
-        <Card className="w-full bg-gray-200 border border-gray-300 p-4 rounded-lg space-y-4">
+        <Card className="w-full bg-gray-200 border border-gray-300 p-4 rounded-lg space-y-4 relative">
+            {/* Action Menu Popover */}
+            <div className="absolute top-2 right-2 z-10">
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <MoreHorizontal className="h-4 w-4" />
+                            <span className="sr-only">Open menu</span>
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-48" align="end">
+                        <div className="space-y-1">
+                            <EditImageDialog
+                                currentTitle={title}
+                                currentImageBase64={imageBase64}
+                                onEditImage={onEdit}
+                                trigger={
+                                    <Button variant="ghost" className="w-full justify-start">
+                                        Edit Image
+                                    </Button>
+                                }
+                            />
+                            <Button
+                                variant="ghost"
+                                className="w-full justify-start text-destructive hover:text-destructive"
+                                onClick={onDelete}
+                            >
+                                Delete Image
+                            </Button>
+                        </div>
+                    </PopoverContent>
+                </Popover>
+            </div>
+
             <CardContent className="space-y-4">
                 {/* Title Field */}
                 <Input
@@ -104,14 +145,7 @@ const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, title, notes, on
                     onDeleteTagAndItem={onDeleteTagAndItem}
                 />
 
-                <Separator />
 
-                {/* Delete Button */}
-                <div className="flex justify-end">
-                    <Button onClick={onDelete} variant="destructive">
-                        Delete Image
-                    </Button>
-                </div>
             </CardContent>
         </Card>
     );

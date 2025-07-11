@@ -12,12 +12,12 @@ export interface ImageItem {
 export const useImages = () => {
     const [imageItems, setImageItems] = useState<ImageItem[]>([]);
 
-    const addImage = useCallback((imageBase64: string) => {
+    const addImage = useCallback((imageBase64: string, title: string = '') => {
         const newImageItem: ImageItem = {
             id: uuidv4(),
             imageBase64,
             timestamp: Date.now(),
-            title: '',
+            title,
             notes: ''
         };
         setImageItems(prev => [...prev, newImageItem]);
@@ -39,11 +39,18 @@ export const useImages = () => {
         ));
     }, []);
 
+    const updateImage = useCallback((imageId: string, imageBase64: string, title: string) => {
+        setImageItems(prev => prev.map(item =>
+            item.id === imageId ? { ...item, imageBase64, title } : item
+        ));
+    }, []);
+
     return {
         imageItems,
         addImage,
         deleteImage,
         updateImageTitle,
-        updateImageNotes
+        updateImageNotes,
+        updateImage
     };
 }; 
