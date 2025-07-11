@@ -36,7 +36,6 @@ const App: React.FC = () => {
     removeItemData(tagId);
   };
 
-  // Memoized data for rendering
   const imageItemsWithTags = useMemo(() => {
     return imageItems.map(imageItem => {
       const filteredImageTagItems = imageTagItems.filter(
