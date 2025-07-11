@@ -46,7 +46,7 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
 
     const handleEditImage = () => {
         const finalImageBase64 = previewUrl || currentImageBase64;
-        onEditImage(finalImageBase64, title);
+        onEditImage(finalImageBase64, currentTitle); // Keep the current title
         // Reset form
         setSelectedFile(null);
         setPreviewUrl(null);
@@ -56,116 +56,108 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
         setIsOpen(false);
     };
 
-      const handleOpenChange = (open: boolean) => {
-    setIsOpen(open);
-    if (open) {
-      // Initialize form with current values when dialog opens
-      setTitle(currentTitle);
-    } else {
-      // Reset form when dialog closes
-      setTitle(currentTitle);
-      setSelectedFile(null);
-      setPreviewUrl(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }
-  };
+    const handleOpenChange = (open: boolean) => {
+        setIsOpen(open);
+        if (open) {
+            // Initialize form with current values when dialog opens
+            setTitle(currentTitle);
+        } else {
+            // Reset form when dialog closes
+            setTitle(currentTitle);
+            setSelectedFile(null);
+            setPreviewUrl(null);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+        }
+    };
 
-  const handleCancel = () => {
-    // Reset form and close dialog
-    setTitle(currentTitle);
-    setSelectedFile(null);
-    setPreviewUrl(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-    setIsOpen(false);
-  };
+    const handleCancel = () => {
+        // Reset form and close dialog
+        setTitle(currentTitle);
+        setSelectedFile(null);
+        setPreviewUrl(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+        setIsOpen(false);
+    };
 
-    const isFormValid = title.trim();
+    const isFormValid = true; // Always valid since we're not editing title
 
     return (
         <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
                 {trigger}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
-                    <DialogTitle>Edit Image</DialogTitle>
-                    <DialogDescription>
-                        Update the title and optionally replace the image.
+                    <DialogTitle className="text-xl">Edit Image</DialogTitle>
+                    <DialogDescription className="text-gray-600">
+                        Update the image file.
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="space-y-4">
-                    {/* Title Input */}
-                    <div className="space-y-2">
-                        <Label htmlFor="edit-image-title">Image Title</Label>
-                        <Input
-                            id="edit-image-title"
-                            type="text"
-                            placeholder="Enter image title..."
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                        />
-                    </div>
+                <div className="space-y-6">
 
-                    {/* Current Image Preview */}
-                    <div className="space-y-2">
-                        <Label>Current Image</Label>
-                        <div className="w-full h-32 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
-                            <img
-                                src={currentImageBase64}
-                                alt="Current"
-                                className="max-w-full max-h-full object-contain"
-                            />
-                        </div>
-                    </div>
+                              {/* Current Image Preview */}
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-gray-700">Current Image</Label>
+            <div className="w-full h-40 bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center shadow-sm">
+              <img
+                src={currentImageBase64}
+                alt="Current"
+                className="max-w-full max-h-full object-contain"
+              />
+            </div>
+          </div>
 
                     {/* File Selection for New Image */}
                     <div className="space-y-2">
-                        <Label htmlFor="edit-image-file">Replace Image (Optional)</Label>
+                        <Label htmlFor="edit-image-file" className="text-sm font-medium text-gray-700">Replace Image (Optional)</Label>
                         <Input
                             id="edit-image-file"
                             ref={fileInputRef}
                             type="file"
                             accept="image/*"
                             onChange={handleFileSelect}
+                            className="border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                         />
                     </div>
 
-                    {/* New Image Preview */}
-                    {previewUrl && (
-                        <div className="space-y-2">
-                            <Label>New Image Preview</Label>
-                            <div className="w-full h-32 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
-                                <img
-                                    src={previewUrl}
-                                    alt="New Preview"
-                                    className="max-w-full max-h-full object-contain"
-                                />
-                            </div>
-                        </div>
-                    )}
+                              {/* New Image Preview */}
+          {previewUrl && (
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700">New Image Preview</Label>
+              <div className="w-full h-40 bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center shadow-sm">
+                <img
+                  src={previewUrl}
+                  alt="New Preview"
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
+            </div>
+          )}
                 </div>
 
-                        <DialogFooter>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleCancel}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="button"
-            onClick={handleEditImage}
-            disabled={!isFormValid}
-          >
-            Save Changes
-          </Button>
-        </DialogFooter>
+                <DialogFooter>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        onClick={handleCancel}
+                        className="border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        type="button"
+                        onClick={handleEditImage}
+                        disabled={!isFormValid}
+                        className="bg-purple-600 hover:bg-purple-700 text-white"
+                    >
+                        Save Changes
+                    </Button>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
     );

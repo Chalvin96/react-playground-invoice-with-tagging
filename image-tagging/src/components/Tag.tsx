@@ -44,11 +44,11 @@ const Tag: React.FC<TagProps> = ({ id, x, y, index, containerRef, onDrag }) => {
         left: `${x}%`,
         top: `${y}%`,
         transform: 'translate(-50%, -50%)',
-        width: '20px',
-        height: '20px',
+        width: '28px',
+        height: '28px',
         opacity: isDragging ? 0.5 : 1,
       }}
-      className="bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold cursor-pointer select-none"
+      className="bg-purple-500 shadow-lg rounded-full flex items-center justify-center text-white text-xs font-bold cursor-pointer select-none hover:bg-purple-600 transition-colors"
     >
       {index}
     </div>

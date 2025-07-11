@@ -51,50 +51,68 @@ const App: React.FC = () => {
   }, [imageItems, imageTagItems]);
 
   return (
-    <div className="min-h-screen flex flex-col w-full">
+    <div className="min-h-screen flex flex-col w-full bg-gray-100">
       {/* Main content area */}
-      <div className="flex-1 p-6 space-y-4 w-full">
-        {imageItemsWithTags.map((imageItem) => (
-          <ImageTagger
-            key={imageItem.id}
-            imageBase64={imageItem.imageBase64}
-            title={imageItem.title}
-            notes={imageItem.notes}
-            onDelete={() => handleDeleteImage(imageItem.id)}
-            onEdit={(imageBase64, title) => handleEditImage(imageItem.id, imageBase64, title)}
-            onImageClick={(x, y) => handleAddTag(imageItem.id, x, y)}
-            tags={imageItem.tags}
-            onDragTag={dragTag}
-            onUpdateItemData={updateItemData}
-            onDeleteTagAndItem={handleDeleteTagAndItem}
-            onUpdateTitle={(title) => updateImageTitle(imageItem.id, title)}
-            onUpdateNotes={(notes) => updateImageNotes(imageItem.id, notes)}
-            itemData={itemData}
-          />
-        ))}
-      </div>
-
-      {/* Bottom centered button */}
-      <div className="p-6 border-t bg-white">
-        <div className="flex items-center justify-center">
-          <div className="flex-1 max-w-xs">
-            <div className="h-px bg-gray-300"></div>
-          </div>
-          <div className="px-4">
+      <div className="flex-1 p-6 space-y-6 w-full">
+        {imageItemsWithTags.length === 0 ? (
+          <div className="text-center py-16">
+            <div className="text-gray-400 text-8xl mb-6">🖼️</div>
+            <h2 className="text-2xl font-semibold text-gray-600 mb-4">No Images Yet</h2>
+            <p className="text-gray-500 mb-8">Start by adding your first image to begin tagging items</p>
             <AddImageDialog
               onAddImage={handleAddImage}
               trigger={
-                <Button className="px-8">
-                  Add Image
+                <Button size="lg" className="px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white">
+                  Add Your First Image
                 </Button>
               }
             />
           </div>
-          <div className="flex-1 max-w-xs">
-            <div className="h-px bg-gray-300"></div>
+        ) : (
+          imageItemsWithTags.map((imageItem) => (
+            <ImageTagger
+              key={imageItem.id}
+              imageBase64={imageItem.imageBase64}
+              title={imageItem.title}
+              notes={imageItem.notes}
+              onDelete={() => handleDeleteImage(imageItem.id)}
+              onEdit={(imageBase64, title) => handleEditImage(imageItem.id, imageBase64, title)}
+              onImageClick={(x, y) => handleAddTag(imageItem.id, x, y)}
+              tags={imageItem.tags}
+              onDragTag={dragTag}
+              onUpdateItemData={updateItemData}
+              onDeleteTagAndItem={handleDeleteTagAndItem}
+              onUpdateTitle={(title) => updateImageTitle(imageItem.id, title)}
+              onUpdateNotes={(notes) => updateImageNotes(imageItem.id, notes)}
+              itemData={itemData}
+            />
+          ))
+        )}
+      </div>
+
+      {/* Bottom centered button */}
+      {imageItemsWithTags.length > 0 && (
+        <div className="p-6 border-t bg-white shadow-sm">
+          <div className="flex items-center justify-center">
+            <div className="flex-1 max-w-xs">
+              <div className="h-px bg-gray-200"></div>
+            </div>
+            <div className="px-4">
+              <AddImageDialog
+                onAddImage={handleAddImage}
+                trigger={
+                  <Button className="px-8 py-2 bg-purple-600 hover:bg-purple-700 text-white">
+                    Add Another Image
+                  </Button>
+                }
+              />
+            </div>
+            <div className="flex-1 max-w-xs">
+              <div className="h-px bg-gray-200"></div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

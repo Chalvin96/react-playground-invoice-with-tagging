@@ -54,13 +54,13 @@ const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, title, notes, on
     };
 
     return (
-        <Card className="w-full bg-gray-200 border border-gray-300 p-4 rounded-lg space-y-4 relative">
+        <Card className="w-full bg-white shadow-sm hover:shadow-md transition-shadow duration-200 relative">
             {/* Action Menu Popover */}
-            <div className="absolute top-2 right-2 z-10">
+            <div className="absolute top-3 right-3 z-10">
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="h-4 w-4" />
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-200 bg-white/80 backdrop-blur-sm shadow-sm">
+                            <MoreHorizontal className="h-4 w-4 text-gray-800" />
                             <span className="sr-only">Open menu</span>
                         </Button>
                     </PopoverTrigger>
@@ -71,14 +71,14 @@ const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, title, notes, on
                                 currentImageBase64={imageBase64}
                                 onEditImage={onEdit}
                                 trigger={
-                                    <Button variant="ghost" className="w-full justify-start">
+                                    <Button variant="ghost" className="w-full justify-start text-gray-800 hover:text-gray-900 hover:bg-gray-100 font-medium">
                                         Edit Image
                                     </Button>
                                 }
                             />
                             <Button
                                 variant="ghost"
-                                className="w-full justify-start text-destructive hover:text-destructive"
+                                className="w-full justify-start text-red-700 hover:text-red-800 hover:bg-red-50 font-medium"
                                 onClick={onDelete}
                             >
                                 Delete Image
@@ -88,22 +88,24 @@ const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, title, notes, on
                 </Popover>
             </div>
 
-            <CardContent className="space-y-4">
+            <CardContent className="p-8 space-y-8">
                 {/* Title Field */}
-                <Input
-                    type="text"
-                    placeholder="Image Title"
-                    value={title}
-                    onChange={(e) => onUpdateTitle(e.target.value)}
-                    className="min-w-[100px] w-fit px-2 py-1 border-b border-gray-300 focus:outline-none focus:border-blue-500 font-semibold text-lg bg-transparent focus-visible:ring-0"
-                />
+                <div className="space-y-2">
+                    <Input
+                        type="text"
+                        placeholder="Enter image title..."
+                        value={title}
+                        onChange={(e) => onUpdateTitle(e.target.value)}
+                        className="text-2xl font-semibold border-0 border-b-2 border-gray-200 focus:border-purple-500 focus:ring-0 bg-transparent px-0 py-3 rounded-none"
+                    />
+                </div>
 
                 {/* Image and Notes Section */}
-                <div className="flex gap-4">
+                <div className="flex gap-8">
                     {/* Image Container */}
-                    <div className="w-[600px] h-[400px] flex-shrink-0">
+                    <div className="w-[800px] h-[500px] flex-shrink-0">
                         <div ref={containerRef} className="relative w-full h-full" onClick={handleClick}>
-                            <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden">
+                            <div className="w-full h-full flex items-center justify-center bg-gray-50 rounded-xl overflow-hidden shadow-inner hover:shadow-md transition-shadow">
                                 <img
                                     src={imageBase64}
                                     alt="Uploaded"
@@ -126,16 +128,19 @@ const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, title, notes, on
 
                     {/* Notes Field */}
                     <div className="flex-1">
-                        <Textarea
-                            placeholder="Notes..."
-                            value={notes}
-                            onChange={(e) => onUpdateNotes(e.target.value)}
-                            className="min-w-[100px] w-fit h-fit min-h-[50px] px-2 py-1 pb-0 border-b border-gray-300 focus:outline-none focus:border-blue-500 resize-none bg-transparent"
-                        />
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">Notes</label>
+                            <Textarea
+                                placeholder="Add notes about this image..."
+                                value={notes}
+                                onChange={(e) => onUpdateNotes(e.target.value)}
+                                className="min-h-[200px] border border-gray-200 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-none bg-white"
+                            />
+                        </div>
                     </div>
                 </div>
 
-                <Separator />
+                <Separator className="my-6" />
 
                 {/* Items Section */}
                 <ItemsList
@@ -144,8 +149,6 @@ const ImageTagger: React.FC<ImageTaggerProps> = ({ imageBase64, title, notes, on
                     onUpdateItemData={onUpdateItemData}
                     onDeleteTagAndItem={onDeleteTagAndItem}
                 />
-
-
             </CardContent>
         </Card>
     );
