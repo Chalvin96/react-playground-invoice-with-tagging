@@ -1,6 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
-import type { ItemData } from '../hooks/useItems';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import type { ItemData } from '@/hooks/useItems';
 
 interface ItemRowProps {
     tagIndex: number;
@@ -35,21 +37,25 @@ const ItemRow: React.FC<ItemRowProps> = ({ tagIndex, onDelete, onUpdate, initial
             </div>
 
             {/* Name Field */}
-            <input
+            <Label htmlFor={`item-name-${tagIndex}`} className="sr-only">Item Name</Label>
+            <Input
+                id={`item-name-${tagIndex}`}
                 type="text"
                 placeholder="Item name"
                 value={data.name}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('name', e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => handleInputChange('name', e.target.value)}
+                className="flex-1"
             />
 
             {/* Quantity Field */}
-            <input
+            <Label htmlFor={`item-qty-${tagIndex}`} className="sr-only">Quantity</Label>
+            <Input
+                id={`item-qty-${tagIndex}`}
                 type="text"
                 placeholder="Qty"
                 value={data.quantity}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('quantity', e.target.value)}
-                className="w-20 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => handleInputChange('quantity', e.target.value)}
+                className="w-20"
             />
 
             {/* Unit Price Field */}
@@ -57,12 +63,14 @@ const ItemRow: React.FC<ItemRowProps> = ({ tagIndex, onDelete, onUpdate, initial
                 <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-500 text-sm">
                     Rp.
                 </span>
-                <input
+                <Label htmlFor={`item-price-${tagIndex}`} className="sr-only">Unit Price</Label>
+                <Input
+                    id={`item-price-${tagIndex}`}
                     type="text"
                     placeholder="0"
                     value={data.unitPrice}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleInputChange('unitPrice', e.target.value)}
-                    className="w-24 pl-8 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onChange={(e) => handleInputChange('unitPrice', e.target.value)}
+                    className="w-24 pl-8"
                 />
             </div>
 
