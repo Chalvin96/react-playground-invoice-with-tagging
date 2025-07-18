@@ -12,17 +12,13 @@ const Sidebar = ({
   selectedImageId,
   setSelectedImageId,
   addImage,
-  deleteImage,
-  updateImage,
-  setEditImageId
+  deleteImage
 }: {
   imageItemsWithTags: any[];
   selectedImageId: string | null;
   setSelectedImageId: (id: string) => void;
   addImage: (base64: string, title: string) => void;
   deleteImage: (id: string) => void;
-  updateImage: (id: string, base64: string, title: string) => void;
-  setEditImageId: (id: string | null) => void;
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -83,11 +79,6 @@ const Sidebar = ({
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-32" align="end">
-                        <Button
-                          className="w-full justify-start text-gray-800 hover:text-gray-900 hover:bg-gray-100 font-medium"
-                          variant="ghost"
-                          onClick={e => { e.stopPropagation(); setEditImageId(img.id); }}
-                        >Edit Pic</Button>
                         <Button
                           className="w-full justify-start text-red-700 hover:text-red-800 hover:bg-red-50 font-medium"
                           variant="ghost"

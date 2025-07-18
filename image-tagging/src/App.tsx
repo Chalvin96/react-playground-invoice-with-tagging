@@ -8,12 +8,11 @@ import TaggedItemsSection from '@/components/TaggedItemsSection';
 import EditItemDialog from '@/components/EditItemDialog';
 
 const App: React.FC = () => {
-  const { imageItems, addImage, deleteImage, updateImageTitle, updateImageNotes, updateImage } = useImages();
+  const { imageItems, addImage, deleteImage, updateImageTitle, updateImageNotes } = useImages();
   const { imageTagItems, addTag, removeTag, dragTag, removeTagsForImage } = useTags(imageItems);
   const { itemData, updateItemData, removeItemData, removeItemsForImage, addItemForTag } = useItems();
 
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
-  const [editImageId, setEditImageId] = useState<string | null>(null);
   const [editItemTagId, setEditItemTagId] = useState<string | null>(null);
 
   // Memoize images with tags
@@ -42,10 +41,9 @@ const App: React.FC = () => {
 
   // Add tag and open edit modal for new tag
   const handleAddTag = (baseImageId: string, x: number, y: number) => {
-    addTag(baseImageId, x, y, (newTagId: string) => {
-      addItemForTag(newTagId);
-      setEditItemTagId(newTagId);
-    });
+    const newTagId = addTag(baseImageId, x, y);
+    addItemForTag(newTagId);
+    setEditItemTagId(newTagId);
   };
 
   // Handle edit item from sidebar
@@ -74,21 +72,19 @@ const App: React.FC = () => {
         setSelectedImageId={setSelectedImageId}
         addImage={addImage}
         deleteImage={deleteImage}
-        updateImage={updateImage}
-        setEditImageId={setEditImageId}
       />
-        <MainImageSection
-          selectedImage={selectedImage}
-          updateImageTitle={updateImageTitle}
-          updateImageNotes={updateImageNotes}
-          onImageClick={handleAddTag}
-          tags={selectedTags}
-          dragTag={dragTag}
-          itemData={itemData}
-          updateItemData={updateItemData}
-          removeTag={removeTag}
-          removeItemData={removeItemData}
-        />
+      <MainImageSection
+        selectedImage={selectedImage}
+        updateImageTitle={updateImageTitle}
+        updateImageNotes={updateImageNotes}
+        onImageClick={handleAddTag}
+        tags={selectedTags}
+        dragTag={dragTag}
+        itemData={itemData}
+        updateItemData={updateItemData}
+        removeTag={removeTag}
+        removeItemData={removeItemData}
+      />
       <TaggedItemsSection
         tags={selectedTags}
         itemData={itemData}

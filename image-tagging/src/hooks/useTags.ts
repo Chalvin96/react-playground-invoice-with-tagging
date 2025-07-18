@@ -30,7 +30,8 @@ export const useTags = (imageItems: any[]) => {
             }));
     }, [imageItems]);
 
-      const addTag = useCallback((baseImageId: string, x: number, y: number, onTagCreated?: (tagId: string) => void) => {
+      const addTag = useCallback((baseImageId: string, x: number, y: number) => {
+    let newTagId: string;
     setImageTagItems(prev => {
       const tagsForImage = prev.filter(tag => tag.baseImageId === baseImageId);
       const maxIndex = tagsForImage.length > 0 ? Math.max(...tagsForImage.map(tag => tag.index)) : 0;
@@ -43,17 +44,13 @@ export const useTags = (imageItems: any[]) => {
         index: maxIndex + 1
       };
 
+      newTagId = newImageTagItem.id;
       const allTags = [...prev, newImageTagItem];
       const reindexedTags = reindexTags(allTags);
       
-      // Call the callback with the new tag ID
-      const newTag = reindexedTags.find(tag => tag.id === newImageTagItem.id);
-      if (newTag && onTagCreated) {
-        onTagCreated(newTag.id);
-      }
-      
       return reindexedTags;
     });
+    return newTagId!;
   }, [reindexTags]);
 
     const removeTag = useCallback((id: string) => {
