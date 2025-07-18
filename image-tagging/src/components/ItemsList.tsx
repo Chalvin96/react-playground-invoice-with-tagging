@@ -1,20 +1,13 @@
 import React from 'react';
 import type { ImageTagItem } from '@/hooks/useTags';
 import type { ItemData } from '@/hooks/useItems';
-import {
-    Table,
-    TableBody,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
-import ItemRow from './ItemRow';
+import { Card } from '@/components/ui/card';
+import { formatRupiah } from '@/lib/utils';
 
 interface ItemsListProps {
     tags: ImageTagItem[];
     itemData: Record<string, ItemData>;
-    onUpdateItemData: (tagId: string, data: ItemData) => void;
-    onDeleteTagAndItem: (tagId: string) => void;
+    onEditItem: (tagId: string) => void;
 }
 
 const K_CONST_EMPTY_ROW_DATA = { name: '', quantity: 0, unitPrice: 0 }
@@ -22,8 +15,7 @@ const K_CONST_EMPTY_ROW_DATA = { name: '', quantity: 0, unitPrice: 0 }
 const ItemsList: React.FC<ItemsListProps> = ({
     tags,
     itemData,
-    onUpdateItemData,
-    onDeleteTagAndItem
+    onEditItem
 }) => {
     if (tags.length === 0) {
         return (
@@ -38,34 +30,34 @@ const ItemsList: React.FC<ItemsListProps> = ({
     }
 
     return (
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <Table>
-                <TableHeader>
-                    <TableRow className="bg-gray-50 hover:bg-gray-100">
-                        <TableHead className="w-16 text-center font-semibold text-gray-700">#</TableHead>
-                        <TableHead className="font-semibold text-gray-700">Item Name</TableHead>
-                        <TableHead className="w-24 text-center font-semibold text-gray-700">Qty</TableHead>
-                        <TableHead className="w-32 text-center font-semibold text-gray-700">Unit Price</TableHead>
-                        <TableHead className="w-32 text-center font-semibold text-gray-700">Total Price</TableHead>
-                        <TableHead className="w-12"></TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {tags.map((tag) => {
-                        const data = itemData[tag.id] || K_CONST_EMPTY_ROW_DATA;
-
-                        return (
-                            <ItemRow
-                                key={tag.id}
-                                tag={tag}
-                                data={data}
-                                onUpdateItemData={onUpdateItemData}
-                                onDeleteTagAndItem={onDeleteTagAndItem}
-                            />
-                        );
-                    })}
-                </TableBody>
-            </Table>
+        <div className="flex flex-col gap-4">
+            <Card className="p-4 bg-white border-none shadow-sm rounded-none">
+                <h2 className="text-lg font-bold text-gray-800">Item List</h2>
+            </Card>
+            {tags.map((tag) => {
+                const data = itemData[tag.id] || K_CONST_EMPTY_ROW_DATA;
+                return (
+                    <Card
+                        key={tag.id}
+                        className="p-4 flex flex-col gap-2 cursor-pointer shadow-lg hover:shadow-2xl hover:scale-[1.02] transition-transform duration-150 bg-white border-none"
+                        onClick={() => onEditItem(tag.id)}
+                    >
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                                {tag.index}
+                            </div>
+                            <span className="font-semibold text-gray-700">{data.name ? data.name : `Tag #${tag.index}`}</span>
+                        </div>
+                        <div className="flex flex-col gap-1 text-gray-800">
+                            <div className="flex gap-4">
+                                <span><span className="font-medium">Qty:</span> {data.quantity}</span>
+                                <span><span className="font-medium">Unit Price:</span> {formatRupiah(data.unitPrice)}</span>
+                            </div>
+                            <div><span className="font-medium">Total:</span> {formatRupiah(data.quantity * data.unitPrice)}</div>
+                        </div>
+                    </Card>
+                );
+            })}
         </div>
     );
 };

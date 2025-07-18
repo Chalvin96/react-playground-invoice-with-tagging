@@ -17,19 +17,27 @@ interface EditImageDialogProps {
     currentImageBase64: string;
     onEditImage: (imageBase64: string, title: string) => void;
     trigger: React.ReactNode;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
 }
 
 const EditImageDialog: React.FC<EditImageDialogProps> = ({
     currentTitle,
     currentImageBase64,
     onEditImage,
-    trigger
+    trigger,
+    open,
+    onOpenChange
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [title, setTitle] = useState(currentTitle);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const isControlled = open !== undefined && onOpenChange !== undefined;
+    const dialogOpen = isControlled ? open : isOpen;
+    const setDialogOpen = isControlled ? onOpenChange : setIsOpen;
 
     const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -57,7 +65,7 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
     };
 
     const handleOpenChange = (open: boolean) => {
-        setIsOpen(open);
+        setDialogOpen(open);
         if (open) {
             // Initialize form with current values when dialog opens
             setTitle(currentTitle);
@@ -86,7 +94,7 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
     const isFormValid = true; // Always valid since we're not editing title
 
     return (
-        <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+        <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
                 {trigger}
             </DialogTrigger>
