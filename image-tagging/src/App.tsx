@@ -6,6 +6,7 @@ import Sidebar from '@/components/Sidebar';
 import MainImageSection from '@/components/MainImageSection';
 import TaggedItemsSection from '@/components/TaggedItemsSection';
 import EditItemDialog from '@/components/EditItemDialog';
+import AddItemDialog from '@/components/AddItemDialog';
 
 const App: React.FC = () => {
   const { imageItems, addImage, deleteImage, updateImageTitle, updateImageNotes } = useImages();
@@ -14,6 +15,7 @@ const App: React.FC = () => {
 
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
   const [editItemTagId, setEditItemTagId] = useState<string | null>(null);
+  const [isAddingNewItem, setIsAddingNewItem] = useState(false);
 
   // Memoize images with tags
   const imageItemsWithTags = useMemo(() => {
@@ -39,16 +41,18 @@ const App: React.FC = () => {
     }
   }, [imageItemsWithTags, selectedImageId]);
 
-  // Add tag and open edit modal for new tag
+  // Add tag and open add modal for new tag
   const handleAddTag = (baseImageId: string, x: number, y: number) => {
     const newTagId = addTag(baseImageId, x, y);
     addItemForTag(newTagId);
     setEditItemTagId(newTagId);
+    setIsAddingNewItem(true);
   };
 
   // Handle edit item from sidebar
   const handleEditItem = (tagId: string) => {
     setEditItemTagId(tagId);
+    setIsAddingNewItem(false);
   };
 
   const handleEditItemSave = (tagId: string, data: any) => {
@@ -62,6 +66,16 @@ const App: React.FC = () => {
 
   const handleEditItemClose = () => {
     setEditItemTagId(null);
+    setIsAddingNewItem(false);
+  };
+
+  const handleAddItemCancel = () => {
+    if (editItemTagId) {
+      removeTag(editItemTagId);
+      removeItemData(editItemTagId);
+    }
+    setEditItemTagId(null);
+    setIsAddingNewItem(false);
   };
 
   return (
@@ -90,14 +104,25 @@ const App: React.FC = () => {
         itemData={itemData}
         onEditItem={handleEditItem}
       />
-      <EditItemDialog
-        open={!!editItemTagId}
-        onOpenChange={open => { if (!open) handleEditItemClose(); }}
-        itemData={editItemTagId ? itemData[editItemTagId] : null}
-        onSave={data => editItemTagId && handleEditItemSave(editItemTagId, data)}
-        onDelete={() => editItemTagId && handleEditItemDelete(editItemTagId)}
-        tag={editItemTagId ? selectedTags.find(t => t.id === editItemTagId) : null}
-      />
+      {isAddingNewItem ? (
+        <AddItemDialog
+          open={!!editItemTagId}
+          onOpenChange={open => { if (!open) handleEditItemClose(); }}
+          itemData={editItemTagId ? itemData[editItemTagId] : null}
+          onSave={data => editItemTagId && handleEditItemSave(editItemTagId, data)}
+          onCancel={handleAddItemCancel}
+          tag={editItemTagId ? selectedTags.find(t => t.id === editItemTagId) : null}
+        />
+      ) : (
+        <EditItemDialog
+          open={!!editItemTagId}
+          onOpenChange={open => { if (!open) handleEditItemClose(); }}
+          itemData={editItemTagId ? itemData[editItemTagId] : null}
+          onSave={data => editItemTagId && handleEditItemSave(editItemTagId, data)}
+          onDelete={() => editItemTagId && handleEditItemDelete(editItemTagId)}
+          tag={editItemTagId ? selectedTags.find(t => t.id === editItemTagId) : null}
+        />
+      )}
     </div>
   );
 };

@@ -35,7 +35,7 @@ const Sidebar = ({
   };
 
   return (
-    <div className="w-64 flex flex-col bg-white h-screen border-r overflow-y-auto">
+    <div className="w-64 flex flex-col bg-white h-screen border-r overflow-y-auto rounded-lg">
       <div className="flex items-center justify-between p-4 border-b sticky top-0 bg-white z-10">
         <span className="font-semibold text-lg">Images</span>
         <Button

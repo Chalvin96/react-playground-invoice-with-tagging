@@ -3,19 +3,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Button } from './ui/button';
 import { formatRupiah } from '@/lib/utils';
 
-const EditItemDialog = ({
+const AddItemDialog = ({
   open,
   onOpenChange,
   itemData,
   onSave,
-  onDelete,
+  onCancel,
   tag
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   itemData: any;
   onSave: (data: any) => void;
-  onDelete: () => void;
+  onCancel: () => void;
   tag: any;
 }) => {
   const [editData, setEditData] = useState(itemData || { name: '', quantity: 0, unitPrice: 0 });
@@ -32,8 +32,9 @@ const EditItemDialog = ({
     onSave(editData);
     onOpenChange(false);
   };
-  const handleDelete = () => {
-    onDelete();
+
+  const handleCancel = () => {
+    onCancel();
     onOpenChange(false);
   };
 
@@ -41,7 +42,7 @@ const EditItemDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="font-bold">Edit Existing Item</DialogTitle>
+          <DialogTitle className="font-bold">Add New Item</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-4">
           <label className="flex flex-col gap-1 font-medium text-gray-700">
@@ -97,15 +98,12 @@ const EditItemDialog = ({
           <div className="font-semibold text-gray-700">Total: {formatRupiah(editData.quantity * editData.unitPrice)}</div>
         </div>
         <DialogFooter className="flex flex-row gap-2 justify-between mt-4">
-          <Button variant="destructive" onClick={handleDelete}>Delete</Button>
-          <div className="flex gap-2 ml-auto">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-            <Button onClick={handleSave}>Save</Button>
-          </div>
+          <Button variant="destructive" onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handleSave}>Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default EditItemDialog; 
+export default AddItemDialog; 

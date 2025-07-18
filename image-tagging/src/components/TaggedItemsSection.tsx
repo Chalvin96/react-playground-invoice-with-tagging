@@ -11,7 +11,7 @@ const TaggedItemsSection = ({
   onEditItem: (tagId: string) => void;
 }) => {
   return (
-    <div className="w-[400px] flex flex-col h-screen overflow-y-auto bg-white">
+    <div className="w-[400px] flex flex-col h-screen overflow-y-auto bg-white rounded-lg">
       <div className="flex flex-col gap-4 p-4">
         <ItemsList
           tags={tags}
