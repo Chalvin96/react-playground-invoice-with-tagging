@@ -20,14 +20,14 @@ const MainImageSection = ({
   tags: any[];
   dragTag: any;
 }) => {
-  if (!selectedImage) return <div className="flex-1 flex items-center justify-center bg-white rounded-lg shadow p-8">No Image Selected</div>;
+  if (!selectedImage) return <div className="w-[700px] mx-auto my-2 flex items-center justify-center bg-white rounded-lg shadow p-8">No Image Selected</div>;
 
   const handleImageClick = (x: number, y: number) => {
     onImageClick(selectedImage.id, x, y);
   };
 
   return (
-    <div className="flex flex-col bg-white rounded-lg shadow p-8 gap-2 min-w-[300px] max-w-2xl mx-auto flex-1 my-2">
+    <div className="flex flex-col bg-white rounded-lg shadow p-8 gap-2 w-[700px] mx-auto my-2">
       {/* Title input */}
       <div className="flex items-center gap-2">
         <div className="grid w-full max-w-sm items-center gap-3">
@@ -38,14 +38,12 @@ const MainImageSection = ({
             onChange={e => updateImageTitle(selectedImage.id, e.target.value)}
             className="input input-ghost shadow-none md:text-2xl font-semibold bg-white border-none focus:ring-offset-0 focus:border-ring-white focus-visible:ring-0"
 
-
-
           />
         </div>
       </div>
       <Separator />
       {/* Image with tags */}
-      <div className="flex-1 flex items-center justify-center max-h-[450px]">
+      <div className="flex-1 flex items-center justify-center h-[400px] w-[600px] mx-auto">
         <ImageWithTags
           imageBase64={selectedImage.imageBase64}
           title={selectedImage.title}

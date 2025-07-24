@@ -25,11 +25,11 @@ const ImageWithTags = ({
   };
 
   return (
-    <div ref={containerRef} className="relative w-full h-full min-w-[300px] min-h-[300px] flex items-center justify-center" onClick={handleClick}>
+    <div ref={containerRef} className="relative w-[600px] h-[400px] mx-auto" onClick={handleClick}>
       <img
         src={imageBase64}
         alt={title}
-        className="max-w-full max-h-full object-contain min-w-[300px] min-h-[300px] rounded-md"
+        className="w-full h-full object-contain rounded-md"
       />
       {tags.map((tag: any) => (
         <Tag
