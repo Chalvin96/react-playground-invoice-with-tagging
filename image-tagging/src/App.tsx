@@ -1,8 +1,8 @@
-import React, { useMemo, useState, useRef } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useImages } from "@/hooks/useImages";
 import { useTags } from "@/hooks/useTags";
 import { useItems } from "@/hooks/useItems";
-import Sidebar from '@/components/Sidebar';
+import ThumbnailList from '@/components/ThumbnailList';
 import MainImageSection from '@/components/MainImageSection';
 import TaggedItemsSection from '@/components/TaggedItemsSection';
 import EditItemDialog from '@/components/EditItemDialog';
@@ -10,8 +10,8 @@ import AddItemDialog from '@/components/AddItemDialog';
 
 const App: React.FC = () => {
   const { imageItems, addImage, deleteImage, updateImageTitle, updateImageNotes } = useImages();
-  const { imageTagItems, addTag, removeTag, dragTag, removeTagsForImage } = useTags(imageItems);
-  const { itemData, updateItemData, removeItemData, removeItemsForImage, addItemForTag } = useItems();
+  const { imageTagItems, addTag, removeTag, dragTag } = useTags(imageItems);
+  const { itemData, updateItemData, removeItemData, addItemForTag } = useItems();
 
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
   const [editItemTagId, setEditItemTagId] = useState<string | null>(null);
@@ -35,7 +35,7 @@ const App: React.FC = () => {
   const selectedTags = selectedImage ? selectedImage.tags : [];
 
   // Set default selected image on first load or when images change
-  React.useEffect(() => {
+  useEffect(() => {
     if (imageItemsWithTags.length > 0 && (!selectedImageId || !imageItemsWithTags.some(img => img.id === selectedImageId))) {
       setSelectedImageId(imageItemsWithTags[0].id);
     }
@@ -59,12 +59,12 @@ const App: React.FC = () => {
     updateItemData(tagId, data);
   };
 
-  const handleEditItemDelete = (tagId: string) => {
+  const handleDeleteItem = (tagId: string) => {
     removeTag(tagId);
     removeItemData(tagId);
   };
 
-  const handleEditItemClose = () => {
+  const handleCloseEditItem = () => {
     setEditItemTagId(null);
     setIsAddingNewItem(false);
   };
@@ -80,7 +80,7 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen w-full flex flex-row bg-gray-100 gap-4">
-      <Sidebar
+      <ThumbnailList
         imageItemsWithTags={imageItemsWithTags}
         selectedImageId={selectedImageId}
         setSelectedImageId={setSelectedImageId}
@@ -94,10 +94,6 @@ const App: React.FC = () => {
         onImageClick={handleAddTag}
         tags={selectedTags}
         dragTag={dragTag}
-        itemData={itemData}
-        updateItemData={updateItemData}
-        removeTag={removeTag}
-        removeItemData={removeItemData}
       />
       <TaggedItemsSection
         tags={selectedTags}
@@ -107,20 +103,18 @@ const App: React.FC = () => {
       {isAddingNewItem ? (
         <AddItemDialog
           open={!!editItemTagId}
-          onOpenChange={open => { if (!open) handleEditItemClose(); }}
+          onOpenChange={open => { if (!open) handleCloseEditItem(); }}
           itemData={editItemTagId ? itemData[editItemTagId] : null}
           onSave={data => editItemTagId && handleEditItemSave(editItemTagId, data)}
           onCancel={handleAddItemCancel}
-          tag={editItemTagId ? selectedTags.find(t => t.id === editItemTagId) : null}
         />
       ) : (
         <EditItemDialog
           open={!!editItemTagId}
-          onOpenChange={open => { if (!open) handleEditItemClose(); }}
+          onOpenChange={open => { if (!open) handleCloseEditItem(); }}
           itemData={editItemTagId ? itemData[editItemTagId] : null}
           onSave={data => editItemTagId && handleEditItemSave(editItemTagId, data)}
-          onDelete={() => editItemTagId && handleEditItemDelete(editItemTagId)}
-          tag={editItemTagId ? selectedTags.find(t => t.id === editItemTagId) : null}
+          onDelete={() => editItemTagId && handleDeleteItem(editItemTagId)}
         />
       )}
     </div>

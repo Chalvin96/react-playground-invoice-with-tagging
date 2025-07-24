@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import Tag from './Tag';
 
 const ImageWithTags = ({
@@ -25,7 +25,7 @@ const ImageWithTags = ({
   };
 
   return (
-    <div ref={containerRef} className="relative w-full h-full min-w-[300px] min-h-[300px] flex items-center justify-center" onClick={handleClick}>
+    <div ref={containerRef} className="relative border-2 border-gray-300 rounded-md flex items-center justify-center" onClick={handleClick}>
       <div className="w-full h-full flex items-center justify-center bg-gray-50 rounded-md overflow-hidden shadow-inner hover:shadow-md transition-shadow">
         <img
           src={imageBase64}

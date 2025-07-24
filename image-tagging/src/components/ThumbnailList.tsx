@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { Button } from './ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { MoreHorizontal } from 'lucide-react';
@@ -7,7 +7,7 @@ function getFileNameWithoutExt(filename: string) {
   return filename.replace(/\.[^/.]+$/, "");
 }
 
-const Sidebar = ({
+const ThumbnailList = ({
   imageItemsWithTags,
   selectedImageId,
   setSelectedImageId,
@@ -26,6 +26,9 @@ const Sidebar = ({
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
+
+      // Add image as base64 url for simplification
+      // TODO: Upload to s3 + add CDN
       reader.onload = (e) => {
         const result = e.target?.result as string;
         addImage(result, getFileNameWithoutExt(file.name));
@@ -56,19 +59,19 @@ const Sidebar = ({
         {imageItemsWithTags.length === 0 ? (
           <div className="text-center py-16 text-gray-400">No Images</div>
         ) : (
-          <ul className="space-y-2 p-2">
+          <div className="space-y-2 p-2">
             {imageItemsWithTags.map((img) => (
-              <li
+              <div
                 key={img.id}
                 className={`rounded-lg cursor-pointer flex flex-col gap-1 p-0 hover:bg-purple-50 transition ${selectedImageId === img.id ? 'bg-purple-100 border-2 border-purple-400' : 'border border-gray-300'}`}
                 onClick={() => setSelectedImageId(img.id)}
                 style={{ position: 'relative' }}
               >
-                <div className="relative w-full">
+                <>
                   <img
                     src={img.imageBase64}
                     alt={img.title}
-                    className="w-full h-24 object-cover rounded-md border-none"
+                    className="w-full h-24 object-cover rounded-md border-none p-1"
                   />
                   <div className="absolute top-1 right-1 z-10">
                     <Popover>
@@ -87,15 +90,15 @@ const Sidebar = ({
                       </PopoverContent>
                     </Popover>
                   </div>
-                </div>
+                </>
                 <div className="px-2 pb-2 pt-1 text-xs text-gray-700 truncate w-full text-center">{img.title || 'Untitled'}</div>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </div>
     </div>
   );
 };
 
-export default Sidebar; 
+export default ThumbnailList; 

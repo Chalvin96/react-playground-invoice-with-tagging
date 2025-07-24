@@ -1,4 +1,4 @@
-import React from 'react';
+
 import type { ImageTagItem } from '@/hooks/useTags';
 import type { ItemData } from '@/hooks/useItems';
 import { Card } from '@/components/ui/card';

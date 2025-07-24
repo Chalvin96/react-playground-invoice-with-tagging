@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import {
     Dialog,
     DialogContent,
@@ -30,8 +30,6 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
     onOpenChange
 }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [title, setTitle] = useState(currentTitle);
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -42,7 +40,6 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
     const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            setSelectedFile(file);
             const reader = new FileReader();
             reader.onload = (e) => {
                 const result = e.target?.result as string;
@@ -56,7 +53,6 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
         const finalImageBase64 = previewUrl || currentImageBase64;
         onEditImage(finalImageBase64, currentTitle); // Keep the current title
         // Reset form
-        setSelectedFile(null);
         setPreviewUrl(null);
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
@@ -66,24 +62,13 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
 
     const handleOpenChange = (open: boolean) => {
         setDialogOpen(open);
-        if (open) {
-            // Initialize form with current values when dialog opens
-            setTitle(currentTitle);
-        } else {
-            // Reset form when dialog closes
-            setTitle(currentTitle);
-            setSelectedFile(null);
-            setPreviewUrl(null);
-            if (fileInputRef.current) {
-                fileInputRef.current.value = '';
-            }
+        setPreviewUrl(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
         }
     };
 
     const handleCancel = () => {
-        // Reset form and close dialog
-        setTitle(currentTitle);
-        setSelectedFile(null);
         setPreviewUrl(null);
         if (fileInputRef.current) {
             fileInputRef.current.value = '';

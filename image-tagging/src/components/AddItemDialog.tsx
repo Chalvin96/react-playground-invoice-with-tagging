@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog';
 import { Button } from './ui/button';
 import { formatRupiah } from '@/lib/utils';
@@ -8,15 +8,13 @@ const AddItemDialog = ({
   onOpenChange,
   itemData,
   onSave,
-  onCancel,
-  tag
+  onCancel
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   itemData: any;
   onSave: (data: any) => void;
   onCancel: () => void;
-  tag: any;
 }) => {
   const [editData, setEditData] = useState(itemData || { name: '', quantity: 0, unitPrice: 0 });
 

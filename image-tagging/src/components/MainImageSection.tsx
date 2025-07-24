@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import ImageWithTags from './ImageWithTags';
@@ -9,11 +9,7 @@ const MainImageSection = ({
   updateImageNotes,
   onImageClick,
   tags,
-  dragTag,
-  itemData,
-  updateItemData,
-  removeTag,
-  removeItemData
+  dragTag
 }: {
   selectedImage: any;
   updateImageTitle: (id: string, title: string) => void;
@@ -21,10 +17,6 @@ const MainImageSection = ({
   onImageClick: (id: string, x: number, y: number) => void;
   tags: any[];
   dragTag: any;
-  itemData: any;
-  updateItemData: any;
-  removeTag: any;
-  removeItemData: any;
 }) => {
   if (!selectedImage) return <div className="flex-1 flex items-center justify-center bg-white rounded-lg shadow p-8">No Image Selected</div>;
 
@@ -36,12 +28,12 @@ const MainImageSection = ({
     <div className="flex flex-col bg-white rounded-lg shadow p-8 gap-6 min-w-[300px] max-w-2xl mx-auto flex-1 my-2">
       {/* Title input */}
       <div className="flex items-center gap-2">
-        <span className="text-gray-500 text-sm">title |</span>
         <Input
           type="text"
           value={selectedImage.title}
+          placeholder='Title'
           onChange={e => updateImageTitle(selectedImage.id, e.target.value)}
-          className="text-2xl font-semibold border-0 border-b-2 border-gray-200 focus:border-purple-500 focus:ring-0 bg-white px-0 py-3 rounded-none flex-1"
+          className="input input-ghost text-2xl font-semibold bg-white"
         />
       </div>
       {/* Image with tags */}
