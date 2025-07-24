@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Button } from './ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { MoreHorizontal } from 'lucide-react';
@@ -12,15 +12,20 @@ const ThumbnailList = ({
   selectedImageId,
   setSelectedImageId,
   addImage,
-  deleteImage
+  deleteImage,
+  editImage
 }: {
   imageItemsWithTags: any[];
   selectedImageId: string | null;
   setSelectedImageId: (id: string) => void;
   addImage: (base64: string, title: string) => void;
   deleteImage: (id: string) => void;
+  editImage: (id: string, newImageBase64: string) => void;
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const editFileInputRef = useRef<HTMLInputElement>(null);
+
+  const [openMenu, setOpenMenu] = useState(false);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -34,6 +39,28 @@ const ThumbnailList = ({
         addImage(result, getFileNameWithoutExt(file.name));
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleEditFileSelect = (event: React.ChangeEvent<HTMLInputElement>, imageId: string) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        editImage(imageId, result);
+        if (editFileInputRef.current) {
+          editFileInputRef.current.value = '';
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleEditImage = (imageId: string) => {
+    editFileInputRef.current?.click();
+    if (editFileInputRef.current) {
+      editFileInputRef.current.setAttribute('data-image-id', imageId);
     }
   };
 
@@ -54,6 +81,18 @@ const ThumbnailList = ({
           className="hidden"
           onChange={handleFileSelect}
         />
+        <input
+          ref={editFileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const imageId = e.target.getAttribute('data-image-id');
+            if (imageId) {
+              handleEditFileSelect(e, imageId);
+            }
+          }}
+        />
       </div>
       <div className="flex-1 overflow-y-auto">
         {imageItemsWithTags.length === 0 ? (
@@ -73,19 +112,23 @@ const ThumbnailList = ({
                     alt={img.title}
                     className="w-full h-24 object-cover rounded-md border-none p-1"
                   />
-                  <div className="absolute top-1 right-1 z-10">
-                    <Popover>
+                  <div className="absolute top-1 right-1">
+                    <Popover open={openMenu} onOpenChange={setOpenMenu}>
                       <PopoverTrigger asChild>
                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-200 bg-white/80 backdrop-blur-sm shadow-sm">
                           <MoreHorizontal className="h-4 w-4 text-gray-800" />
-                          <span className="sr-only">Open menu</span>
                         </Button>
                       </PopoverTrigger>
-                      <PopoverContent className="w-32" align="end">
+                      <PopoverContent className="w-32 py-2 px-2">
                         <Button
-                          className="w-full justify-start text-red-700 hover:text-red-800 hover:bg-red-50 font-medium"
+                          className="w-full justify-center hover:bg-purple-50 font-medium rounded-none"
                           variant="ghost"
-                          onClick={e => { e.stopPropagation(); deleteImage(img.id); }}
+                          onClick={e => { e.stopPropagation(); handleEditImage(img.id); setOpenMenu(false); }}
+                        >Edit</Button>
+                        <Button
+                          className="w-full justify-center text-red-700 hover:text-red-800 hover:bg-red-50 font-medium rounded-none"
+                          variant="ghost"
+                          onClick={e => { e.stopPropagation(); deleteImage(img.id); setOpenMenu(false); }}
                         >Delete</Button>
                       </PopoverContent>
                     </Popover>

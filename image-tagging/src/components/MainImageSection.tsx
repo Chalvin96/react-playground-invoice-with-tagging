@@ -2,6 +2,8 @@
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import ImageWithTags from './ImageWithTags';
+import { Separator } from './ui/separator';
+import { Label } from './ui/label';
 
 const MainImageSection = ({
   selectedImage,
@@ -25,17 +27,23 @@ const MainImageSection = ({
   };
 
   return (
-    <div className="flex flex-col bg-white rounded-lg shadow p-8 gap-6 min-w-[300px] max-w-2xl mx-auto flex-1 my-2">
+    <div className="flex flex-col bg-white rounded-lg shadow p-8 gap-2 min-w-[300px] max-w-2xl mx-auto flex-1 my-2">
       {/* Title input */}
       <div className="flex items-center gap-2">
-        <Input
-          type="text"
-          value={selectedImage.title}
-          placeholder='Title'
-          onChange={e => updateImageTitle(selectedImage.id, e.target.value)}
-          className="input input-ghost text-2xl font-semibold bg-white"
-        />
+        <div className="grid w-full max-w-sm items-center gap-3">
+          <Label htmlFor="title">Title</Label>
+          <Input
+            type="text"
+            value={selectedImage.title}
+            onChange={e => updateImageTitle(selectedImage.id, e.target.value)}
+            className="input input-ghost shadow-none md:text-2xl font-semibold bg-white border-none focus:ring-offset-0 focus:border-ring-white focus-visible:ring-0"
+
+
+
+          />
+        </div>
       </div>
+      <Separator />
       {/* Image with tags */}
       <div className="flex-1 flex items-center justify-center max-h-[450px]">
         <ImageWithTags

@@ -9,7 +9,7 @@ import EditItemDialog from '@/components/EditItemDialog';
 import AddItemDialog from '@/components/AddItemDialog';
 
 const App: React.FC = () => {
-  const { imageItems, addImage, deleteImage, updateImageTitle, updateImageNotes } = useImages();
+  const { imageItems, addImage, deleteImage, updateImageTitle, updateImageNotes, updateImage } = useImages();
   const { imageTagItems, addTag, removeTag, dragTag } = useTags(imageItems);
   const { itemData, updateItemData, removeItemData, addItemForTag } = useItems();
 
@@ -78,6 +78,13 @@ const App: React.FC = () => {
     setIsAddingNewItem(false);
   };
 
+  const handleEditImage = (imageId: string, newImageBase64: string) => {
+    const currentImage = imageItems.find(img => img.id === imageId);
+    if (currentImage) {
+      updateImage(imageId, newImageBase64, currentImage.title);
+    }
+  };
+
   return (
     <div className="min-h-screen w-full flex flex-row bg-gray-100 gap-4">
       <ThumbnailList
@@ -86,6 +93,7 @@ const App: React.FC = () => {
         setSelectedImageId={setSelectedImageId}
         addImage={addImage}
         deleteImage={deleteImage}
+        editImage={handleEditImage}
       />
       <MainImageSection
         selectedImage={selectedImage}

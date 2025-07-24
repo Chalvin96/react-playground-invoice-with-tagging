@@ -41,7 +41,7 @@ const EditItemDialog = ({
         <DialogHeader>
           <DialogTitle className="font-bold">Edit Existing Item</DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 bg-white">
           <label className="flex flex-col gap-1 font-medium text-gray-700">
             Name
             <input
