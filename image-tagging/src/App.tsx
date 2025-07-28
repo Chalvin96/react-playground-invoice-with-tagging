@@ -90,50 +90,44 @@ const App: React.FC = () => {
 
   return (
     <div className="h-screen w-full flex flex-col bg-gray-100 gap-4 p-4">
-      <div className="flex-1 flex flex-row gap-4 min-h-0">
-        {currentView === 'editor' ? (
-          <>
-            <div className="print:hidden">
-              <ThumbnailList
-                imageItemsWithTags={imageItemsWithTags}
-                selectedImageId={selectedImageId}
-                setSelectedImageId={setSelectedImageId}
-                addImage={addImage}
-                deleteImage={deleteImage}
-                editImage={handleEditImage}
-              />
-            </div>
-            <div className="print:hidden">
-              <MainImageSection
-                selectedImage={selectedImage}
-                updateImageTitle={updateImageTitle}
-                updateImageNotes={updateImageNotes}
-                onImageClick={handleAddTag}
-                tags={selectedTags}
-                dragTag={dragTag}
-              />
-            </div>
-            <div className="print:hidden">
-              <TaggedItemsSection
-                tags={selectedTags}
-                itemData={itemData}
-                onEditItem={handleEditItem}
-              />
-            </div>
-            <div className="hidden print:block">
-              <InvoiceView
-                imageItemsWithTags={imageItemsWithTags}
-                itemData={itemData}
-              />
-            </div>
-          </>
-        ) : (
-          <InvoiceView
-            imageItemsWithTags={imageItemsWithTags}
-            itemData={itemData}
-          />
-        )}
-      </div>
+      {currentView === 'editor' ? (
+        <>
+          <div className="flex-1 flex flex-row gap-4 min-h-0 print:hidden">
+            <ThumbnailList
+              imageItemsWithTags={imageItemsWithTags}
+              selectedImageId={selectedImageId}
+              setSelectedImageId={setSelectedImageId}
+              addImage={addImage}
+              deleteImage={deleteImage}
+              editImage={handleEditImage}
+            />
+            <MainImageSection
+              selectedImage={selectedImage}
+              updateImageTitle={updateImageTitle}
+              updateImageNotes={updateImageNotes}
+              onImageClick={handleAddTag}
+              tags={selectedTags}
+              dragTag={dragTag}
+            />
+            <TaggedItemsSection
+              tags={selectedTags}
+              itemData={itemData}
+              onEditItem={handleEditItem}
+            />
+          </div>
+          <div className="hidden print:block">
+            <InvoiceView
+              imageItemsWithTags={imageItemsWithTags}
+              itemData={itemData}
+            />
+          </div>
+        </>
+      ) : (
+        <InvoiceView
+          imageItemsWithTags={imageItemsWithTags}
+          itemData={itemData}
+        />
+      )}
 
       <Footer currentView={currentView} onViewChange={setCurrentView} />
 

@@ -49,6 +49,13 @@ const InvoiceView: React.FC<InvoiceViewProps> = ({ imageItemsWithTags, itemData 
         return sum + item.itemData.quantity;
     }, 0);
 
+    const formatDimensions = (data: ItemData) => {
+        if (data.length || data.width || data.height) {
+            return `${data.length || 0} x ${data.width || 0} x ${data.height || 0} mm`;
+        }
+        return '';
+    };
+
     return (
         <div className="w-full max-w-6xl mx-auto bg-white rounded-lg border border-gray-200 shadow p-8 h-full overflow-y-auto">
             <div className="mb-8">
@@ -66,29 +73,47 @@ const InvoiceView: React.FC<InvoiceViewProps> = ({ imageItemsWithTags, itemData 
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="w-[100px]">Image</TableHead>
                                 <TableHead className="w-[80px]">Tag #</TableHead>
-                                <TableHead>Item Name</TableHead>
-                                <TableHead className="text-center w-[100px]">Quantity</TableHead>
-                                <TableHead className="text-center w-[150px]">Unit Price</TableHead>
-                                <TableHead className="text-center w-[150px]">Total Price</TableHead>
+                                <TableHead>Item Details</TableHead>
+                                <TableHead className="w-[120px] text-right">Unit Price</TableHead>
+                                <TableHead className="w-[80px] text-center">Qty</TableHead>
+                                <TableHead className="w-[120px] text-right">Total</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {allItems.map((item, index) => {
                                 const totalPrice = item.itemData.quantity * item.itemData.unitPrice;
+                                const dimensions = formatDimensions(item.itemData);
                                 return (
                                     <TableRow key={index} className="hover:bg-gray-50">
-                                        <TableCell className="font-medium">{item.imageTitle}</TableCell>
                                         <TableCell className="text-center">
                                             <div className="w-6 h-6 bg-purple-500 text-white rounded-full flex items-center justify-center text-xs font-bold mx-auto">
                                                 {item.tagIndex}
                                             </div>
                                         </TableCell>
-                                        <TableCell>{item.itemData.name}</TableCell>
+                                        <TableCell>
+                                            <div className="flex flex-col gap-1">
+                                                <div className="font-medium text-gray-900">
+                                                    {item.itemData.name}
+                                                </div>
+                                                {dimensions && (
+                                                    <div className="text-sm text-gray-500">
+                                                        {dimensions}
+                                                    </div>
+                                                )}
+                                                {item.itemData.notes && (
+                                                    <div className="text-sm text-gray-600 mt-1">
+                                                        {item.itemData.notes}
+                                                    </div>
+                                                )}
+                                                <div className="text-xs text-gray-400 mt-1">
+                                                    From: {item.imageTitle}
+                                                </div>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="text-right">{formatRupiah(item.itemData.unitPrice)}</TableCell>
                                         <TableCell className="text-center">{item.itemData.quantity}</TableCell>
-                                        <TableCell className="text-center">{formatRupiah(item.itemData.unitPrice)}</TableCell>
-                                        <TableCell className="text-center font-semibold">{formatRupiah(totalPrice)}</TableCell>
+                                        <TableCell className="text-right font-semibold">{formatRupiah(totalPrice)}</TableCell>
                                     </TableRow>
                                 );
                             })}

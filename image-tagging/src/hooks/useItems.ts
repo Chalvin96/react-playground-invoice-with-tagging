@@ -4,6 +4,10 @@ export interface ItemData {
     name: string;
     quantity: number;
     unitPrice: number;
+    length: number;
+    width: number;
+    height: number;
+    notes: string;
 }
 
 export const useItems = () => {
@@ -43,7 +47,11 @@ export const useItems = () => {
             [tagId]: {
                 name: '',
                 quantity: 0,
-                unitPrice: 0
+                unitPrice: 0,
+                length: 0,
+                width: 0,
+                height: 0,
+                notes: ''
             }
         }));
     }, []);
