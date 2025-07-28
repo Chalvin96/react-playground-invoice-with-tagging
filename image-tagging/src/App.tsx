@@ -7,6 +7,8 @@ import MainImageSection from '@/components/MainImageSection';
 import TaggedItemsSection from '@/components/TaggedItemsSection';
 import EditItemDialog from '@/components/EditItemDialog';
 import AddItemDialog from '@/components/AddItemDialog';
+import Footer from '@/components/Footer';
+import InvoiceView from '@/components/InvoiceView';
 
 const App: React.FC = () => {
   const { imageItems, addImage, deleteImage, updateImageTitle, updateImageNotes, updateImage } = useImages();
@@ -16,6 +18,7 @@ const App: React.FC = () => {
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
   const [editItemTagId, setEditItemTagId] = useState<string | null>(null);
   const [isAddingNewItem, setIsAddingNewItem] = useState(false);
+  const [currentView, setCurrentView] = useState<'editor' | 'invoice'>('editor');
 
   // Memoize images with tags
   const imageItemsWithTags = useMemo(() => {
@@ -86,28 +89,54 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-row bg-gray-100 gap-4">
-      <ThumbnailList
-        imageItemsWithTags={imageItemsWithTags}
-        selectedImageId={selectedImageId}
-        setSelectedImageId={setSelectedImageId}
-        addImage={addImage}
-        deleteImage={deleteImage}
-        editImage={handleEditImage}
-      />
-      <MainImageSection
-        selectedImage={selectedImage}
-        updateImageTitle={updateImageTitle}
-        updateImageNotes={updateImageNotes}
-        onImageClick={handleAddTag}
-        tags={selectedTags}
-        dragTag={dragTag}
-      />
-      <TaggedItemsSection
-        tags={selectedTags}
-        itemData={itemData}
-        onEditItem={handleEditItem}
-      />
+    <div className="h-screen w-full flex flex-col bg-gray-100 gap-4 p-4">
+      <div className="flex-1 flex flex-row gap-4 min-h-0">
+        {currentView === 'editor' ? (
+          <>
+            <div className="print:hidden">
+              <ThumbnailList
+                imageItemsWithTags={imageItemsWithTags}
+                selectedImageId={selectedImageId}
+                setSelectedImageId={setSelectedImageId}
+                addImage={addImage}
+                deleteImage={deleteImage}
+                editImage={handleEditImage}
+              />
+            </div>
+            <div className="print:hidden">
+              <MainImageSection
+                selectedImage={selectedImage}
+                updateImageTitle={updateImageTitle}
+                updateImageNotes={updateImageNotes}
+                onImageClick={handleAddTag}
+                tags={selectedTags}
+                dragTag={dragTag}
+              />
+            </div>
+            <div className="print:hidden">
+              <TaggedItemsSection
+                tags={selectedTags}
+                itemData={itemData}
+                onEditItem={handleEditItem}
+              />
+            </div>
+            <div className="hidden print:block">
+              <InvoiceView
+                imageItemsWithTags={imageItemsWithTags}
+                itemData={itemData}
+              />
+            </div>
+          </>
+        ) : (
+          <InvoiceView
+            imageItemsWithTags={imageItemsWithTags}
+            itemData={itemData}
+          />
+        )}
+      </div>
+
+      <Footer currentView={currentView} onViewChange={setCurrentView} />
+
       {isAddingNewItem ? (
         <AddItemDialog
           open={!!editItemTagId}

@@ -20,14 +20,14 @@ const MainImageSection = ({
   tags: any[];
   dragTag: any;
 }) => {
-  if (!selectedImage) return <div className="w-[700px] mx-auto my-2 flex items-center justify-center bg-white rounded-lg shadow p-8">No Image Selected</div>;
+  if (!selectedImage) return <div className="w-[700px] mx-auto h-full flex items-center justify-center bg-white rounded-lg border border-gray-200 shadow p-8">No Image Selected</div>;
 
   const handleImageClick = (x: number, y: number) => {
     onImageClick(selectedImage.id, x, y);
   };
 
   return (
-    <div className="flex flex-col bg-white rounded-lg shadow p-8 gap-2 w-[700px] mx-auto my-2">
+    <div className="flex flex-col bg-white rounded-lg border border-gray-200 shadow p-8 gap-2 w-[700px] mx-auto h-full">
       {/* Title input */}
       <div className="flex items-center gap-2">
         <div className="grid w-full max-w-sm items-center gap-3">
