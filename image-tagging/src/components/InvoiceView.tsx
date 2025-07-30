@@ -9,6 +9,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { formatRupiah } from '@/lib/utils';
+import TagBadge from '@/components/TagBadge';
 
 interface InvoiceViewProps {
     imageItemsWithTags: Array<{
@@ -30,7 +31,7 @@ const InvoiceView: React.FC<InvoiceViewProps> = ({ imageItemsWithTags, itemData 
     imageItemsWithTags.forEach((image) => {
         image.tags.forEach((tag) => {
             const data = itemData[tag.id];
-            if (data && data.name) { // Only include items with names
+            if (data) { // Include all items that have data (even if name is empty)
                 allItems.push({
                     imageTitle: image.title || 'Untitled',
                     tagIndex: tag.index,
@@ -87,14 +88,14 @@ const InvoiceView: React.FC<InvoiceViewProps> = ({ imageItemsWithTags, itemData 
                                 return (
                                     <TableRow key={index} className="hover:bg-gray-50">
                                         <TableCell className="text-center">
-                                            <div className="w-6 h-6 bg-purple-500 text-white rounded-full flex items-center justify-center text-xs font-bold mx-auto">
-                                                {item.tagIndex}
+                                            <div className="mx-auto">
+                                                <TagBadge index={item.tagIndex} />
                                             </div>
                                         </TableCell>
                                         <TableCell>
                                             <div className="flex flex-col gap-1">
                                                 <div className="font-medium text-gray-900">
-                                                    {item.itemData.name}
+                                                    {item.itemData.name || `Tag #${item.tagIndex} (Unnamed Item)`}
                                                 </div>
                                                 {dimensions && (
                                                     <div className="text-sm text-gray-500">

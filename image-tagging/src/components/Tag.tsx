@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useDrag } from 'react-dnd';
+import TagBadge from '@/components/TagBadge';
 
 export interface TagProps {
   id: string;
@@ -40,17 +41,21 @@ const Tag: React.FC<TagProps> = ({ id, x, y, index, containerRef, onDrag }) => {
     <div
       ref={elementRef}
       style={{
-        position: 'absolute',
         left: `${x}%`,
         top: `${y}%`,
-        transform: 'translate(-50%, -50%)',
-        width: '28px',
-        height: '28px',
-        opacity: isDragging ? 0.5 : 1,
       }}
-      className="bg-purple-500 shadow-lg rounded-full flex items-center justify-center text-white text-xs font-bold cursor-pointer select-none hover:bg-purple-600 transition-colors"
+      className={`
+        absolute -translate-x-1/2 -translate-y-1/2 
+        cursor-pointer select-none 
+        transition-colors
+        hover:scale-110
+        ${isDragging ? 'opacity-50' : 'opacity-100'}
+      `}
     >
-      {index}
+      <TagBadge
+        index={index}
+        className="shadow-lg hover:bg-purple-600 transition-colors"
+      />
     </div>
   );
 };

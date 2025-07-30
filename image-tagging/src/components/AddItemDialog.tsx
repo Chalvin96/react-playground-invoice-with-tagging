@@ -207,8 +207,8 @@ const AddItemDialog = ({
         </div>
 
         <DialogFooter className="flex flex-row gap-2 justify-between mt-4">
-          <Button variant="destructive" onClick={handleCancel}>Cancel</Button>
-          <Button onClick={handleSave}>Save</Button>
+          <Button onClick={handleCancel}>Cancel</Button>
+          <Button className="bg-purple-600 hover:bg-purple-700 text-white" onClick={handleSave}>Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

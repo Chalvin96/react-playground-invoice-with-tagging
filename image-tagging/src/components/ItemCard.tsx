@@ -2,6 +2,7 @@ import type { ImageTagItem } from '@/hooks/useTags';
 import type { ItemData } from '@/hooks/useItems';
 import { Card } from '@/components/ui/card';
 import { formatRupiah } from '@/lib/utils';
+import TagBadge from '@/components/TagBadge';
 
 interface ItemCardProps {
     tag: ImageTagItem;
@@ -27,11 +28,10 @@ const ItemCard: React.FC<ItemCardProps> = ({
         <Card
             className="p-4 flex flex-col gap-2 cursor-pointer shadow-lg hover:shadow-2xl hover:scale-[1.02] transition-transform duration-150 bg-white border-none"
             onClick={() => onEditItem(tag.id)}
+
         >
             <div className="flex items-center gap-3 mb-2">
-                <div className="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
-                    {tag.index}
-                </div>
+                <TagBadge index={tag.index} />
                 <span className="font-semibold text-gray-700">{data.name ? data.name : `Tag #${tag.index}`}</span>
             </div>
             <div className="flex flex-col gap-1 text-gray-800">

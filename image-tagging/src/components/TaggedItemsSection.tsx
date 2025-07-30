@@ -1,26 +1,55 @@
 
-import ItemsList from './ItemsList';
+import type { ImageTagItem } from '@/hooks/useTags';
+import type { ItemData } from '@/hooks/useItems';
+import ItemCard from './ItemCard';
 
-const TaggedItemsSection = ({
+interface TaggedItemsSectionProps {
+  tags: ImageTagItem[];
+  itemData: Record<string, ItemData>;
+  onEditItem: (tagId: string) => void;
+}
+
+const K_CONST_EMPTY_ROW_DATA: ItemData = {
+  name: '',
+  quantity: 0,
+  unitPrice: 0,
+  length: 0,
+  width: 0,
+  height: 0,
+  notes: ''
+}
+
+const TaggedItemsSection: React.FC<TaggedItemsSectionProps> = ({
   tags,
   itemData,
   onEditItem
-}: {
-  tags: any[];
-  itemData: any;
-  onEditItem: (tagId: string) => void;
 }) => {
   return (
-    <div className="w-[400px] min-w-[400px] flex flex-col h-full overflow-y-auto bg-white border border-gray-200 rounded-lg">
-      <div className="justify-between p-4 border-b sticky top-0 bg-white z-10 text-center">
+    <div className="min-w-[400px] w-full flex flex-col h-full overflow-y-auto">
+      <div className="justify-between p-4 top-0 ">
         <span className="font-semibold text-lg">Item List</span>
       </div>
       <div className="flex flex-col gap-4 p-4">
-        <ItemsList
-          tags={tags}
-          itemData={itemData}
-          onEditItem={onEditItem}
-        />
+        {tags.length === 0 ? (
+          <div className="text-center">
+            <h3 className="text-lg font-medium text-gray-600 mb-2">No Items Yet</h3>
+            <p className="text-gray-500 text-sm">Click on the image to add tags and items</p>
+          </div>
+        ) : (
+          <div className="flex flex-col min-w-128 gap-2">
+            {tags.map((tag) => {
+              const data = itemData[tag.id] || K_CONST_EMPTY_ROW_DATA;
+              return (
+                <ItemCard
+                  key={tag.id}
+                  tag={tag}
+                  data={data}
+                  onEditItem={onEditItem}
+                />
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

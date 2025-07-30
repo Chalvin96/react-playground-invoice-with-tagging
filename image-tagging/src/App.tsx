@@ -12,8 +12,8 @@ import InvoiceView from '@/components/InvoiceView';
 
 const App: React.FC = () => {
   const { imageItems, addImage, deleteImage, updateImageTitle, updateImageNotes, updateImage } = useImages();
-  const { imageTagItems, addTag, removeTag, dragTag } = useTags(imageItems);
-  const { itemData, updateItemData, removeItemData, addItemForTag } = useItems();
+  const { imageTagItems, addTag, removeTag, dragTag, removeTagsForImage } = useTags(imageItems);
+  const { itemData, updateItemData, removeItemData, removeItemsForImage, addItemForTag } = useItems();
 
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
   const [editItemTagId, setEditItemTagId] = useState<string | null>(null);
@@ -88,17 +88,26 @@ const App: React.FC = () => {
     }
   };
 
+  const handleDeleteImage = (imageId: string) => {
+    // Remove associated items first (needs imageTagItems for reference)
+    removeItemsForImage(imageId, imageTagItems);
+    // Remove associated tags (this will reindex remaining tags)
+    removeTagsForImage(imageId);
+    // Finally delete the image
+    deleteImage(imageId);
+  };
+
   return (
-    <div className="h-screen w-full flex flex-col bg-gray-100 gap-4 p-4">
+    <div className="h-screen w-full flex flex-col bg-gray-100">
       {currentView === 'editor' ? (
         <>
-          <div className="flex-1 flex flex-row gap-4 min-h-0 print:hidden">
+          <div className="flex-1 flex flex-row justify-between print:hidden min-h-0">
             <ThumbnailList
               imageItemsWithTags={imageItemsWithTags}
               selectedImageId={selectedImageId}
               setSelectedImageId={setSelectedImageId}
               addImage={addImage}
-              deleteImage={deleteImage}
+              deleteImage={handleDeleteImage}
               editImage={handleEditImage}
             />
             <MainImageSection

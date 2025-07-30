@@ -6,9 +6,9 @@ import './index.css'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <DndProvider backend={HTML5Backend}>
+  <DndProvider backend={HTML5Backend}>
+    <StrictMode>
       <App />
-    </DndProvider>
-  </StrictMode>,
+    </StrictMode>
+  </DndProvider>,
 )
