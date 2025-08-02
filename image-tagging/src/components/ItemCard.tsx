@@ -1,8 +1,9 @@
 import type { ImageTagItem } from '@/hooks/useTags';
 import type { ItemData } from '@/hooks/useItems';
-import { Card } from '@/components/ui/card';
 import { formatRupiah } from '@/lib/utils';
 import TagBadge from '@/components/TagBadge';
+import { Separator } from './ui/separator';
+import { Card } from '@/components/ui/card';
 
 interface ItemCardProps {
     tag: ImageTagItem;
@@ -16,40 +17,55 @@ const ItemCard: React.FC<ItemCardProps> = ({
     onEditItem
 }) => {
     const formatDimensions = (data: ItemData) => {
-        if (data.length || data.width || data.height) {
-            return `${data.length || 0} x ${data.width || 0} x ${data.height || 0} mm`;
-        }
-        return '';
+        return `${data.length || 0} x ${data.width || 0} x ${data.height || 0} mm`;
     };
 
     const dimensions = formatDimensions(data);
 
     return (
-        <Card
-            className="p-4 flex flex-col gap-2 cursor-pointer shadow-lg hover:shadow-2xl hover:scale-[1.02] transition-transform duration-150 bg-white border-none"
-            onClick={() => onEditItem(tag.id)}
-
-        >
-            <div className="flex items-center gap-3 mb-2">
-                <TagBadge index={tag.index} />
-                <span className="font-semibold text-gray-700">{data.name ? data.name : `Tag #${tag.index}`}</span>
-            </div>
-            <div className="flex flex-col gap-1 text-gray-800">
-                <div className="flex gap-4">
-                    <span><span className="font-medium">Qty:</span> {data.quantity}</span>
-                    <span><span className="font-medium">Unit Price:</span> {formatRupiah(data.unitPrice)}</span>
+        <Card className="py-4 min-w-[400px] w-full border-none shadow-none cursor-pointer hover:bg-gray-50 hover:scale-[1.01] transition-transform duration-150 bg-white rounded-sm">
+            <div
+                className="px-4 flex items-center gap-2 min-w-0 overflow-hidden"
+                onClick={() => onEditItem(tag.id)}
+            >
+                {/* First column: Tag */}
+                <div className="w-[5%] flex-shrink-0">
+                    <TagBadge index={tag.index} />
                 </div>
-                <div><span className="font-medium">Total:</span> {formatRupiah(data.quantity * data.unitPrice)}</div>
-                {dimensions && (
-                    <div className="text-sm text-gray-600">
+
+                {/* Second column: Title, Dimension, Notes */}
+                <div className="w-[60%] flex flex-col gap-1 overflow-hidden">
+                    <div className="font-semibold text-gray-700 truncate">
+                        {data.name ? data.name : `Tag #${tag.index}`}
+                    </div>
+                    <div className="text-sm text-gray-600 truncate">
                         <span className="font-medium">Size:</span> {dimensions}
                     </div>
-                )}
-                {data.notes && (
-                    <div className="text-sm text-gray-600 mt-1">
-                        <span className="font-medium">Notes:</span> {data.notes}
+                    {data.notes && (
+                        <div className="text-sm text-gray-600">
+                            <div className="text-xs text-gray-400 font-medium">Notes</div>
+                            <div className="truncate">{data.notes}</div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Third column: Quantity, Unit Price, Total Price */}
+                <div className="w-[35%] flex flex-col gap-1 text-right text-gray-800 overflow-hidden">
+                    <div className="text-sm text-gray-600 truncate">
+                        {formatRupiah(data.unitPrice)} / unit
                     </div>
-                )}
+                    <div className="text-sm text-right">
+                        <span className="text-white bg-purple-800 rounded-lg px-2 py-1">
+                            x {data.quantity}
+                        </span>
+                    </div>
+                    <div className="font-bold truncate">
+                        Total {formatRupiah(data.quantity * data.unitPrice)}
+                    </div>
+                </div>
+            </div>
+            <div className="px-4">
+                <Separator />
             </div>
         </Card>
     );

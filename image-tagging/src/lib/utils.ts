@@ -6,6 +6,6 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatRupiah(value: number): string {
-  if (isNaN(value)) return 'Rp 0';
-  return 'Rp ' + value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  if (isNaN(value)) return 'Rp0';
+  return 'Rp' + value.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }

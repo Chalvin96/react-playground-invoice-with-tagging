@@ -25,18 +25,18 @@ const TaggedItemsSection: React.FC<TaggedItemsSectionProps> = ({
   onEditItem
 }) => {
   return (
-    <div className="min-w-[400px] w-full flex flex-col h-full overflow-y-auto">
+    <div className="w-full flex flex-col h-full overflow-x-auto overflow-y-hidden">
       <div className="justify-between p-4 top-0 ">
         <span className="font-semibold text-lg">Item List</span>
       </div>
-      <div className="flex flex-col gap-4 p-4">
+      <div className="flex flex-col gap-4 p-4 min-w-0">
         {tags.length === 0 ? (
           <div className="text-center">
             <h3 className="text-lg font-medium text-gray-600 mb-2">No Items Yet</h3>
             <p className="text-gray-500 text-sm">Click on the image to add tags and items</p>
           </div>
         ) : (
-          <div className="flex flex-col min-w-128 gap-2">
+          <div className="flex flex-col min-w-0 gap-2 w-full">
             {tags.map((tag) => {
               const data = itemData[tag.id] || K_CONST_EMPTY_ROW_DATA;
               return (
