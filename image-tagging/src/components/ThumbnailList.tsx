@@ -1,6 +1,6 @@
 import { useRef } from 'react';
-import { Button } from './ui/button';
-import ThumbnailItem from './ThumbnailItem';
+import { Button } from '@/components/ui/button';
+import ThumbnailItem from '@/components/ThumbnailItem';
 
 function getFileNameWithoutExt(filename: string) {
   return filename.replace(/\.[^/.]+$/, "");

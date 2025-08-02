@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import Tag from './Tag';
+import Tag from '@/components/Tag';
 
 const ImageWithTags = ({
   imageBase64,

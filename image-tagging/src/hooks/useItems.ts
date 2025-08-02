@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 
 export interface ItemData {
     name: string;
+    type: 'Product' | 'Service';
     quantity: number;
     unitPrice: number;
     length: number;
@@ -46,6 +47,7 @@ export const useItems = () => {
             ...prev,
             [tagId]: {
                 name: '',
+                type: 'Product',
                 quantity: 0,
                 unitPrice: 0,
                 length: 0,

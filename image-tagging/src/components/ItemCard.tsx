@@ -2,7 +2,7 @@ import type { ImageTagItem } from '@/hooks/useTags';
 import type { ItemData } from '@/hooks/useItems';
 import { formatRupiah } from '@/lib/utils';
 import TagBadge from '@/components/TagBadge';
-import { Separator } from './ui/separator';
+import { Separator } from '@/components/ui/separator';
 import { Card } from '@/components/ui/card';
 
 interface ItemCardProps {
@@ -23,9 +23,14 @@ const ItemCard: React.FC<ItemCardProps> = ({
     const dimensions = formatDimensions(data);
 
     return (
-        <Card className="py-4 min-w-[400px] w-full border-none shadow-none cursor-pointer hover:bg-gray-50 hover:scale-[1.01] transition-transform duration-150 bg-white rounded-sm">
+        <Card className="gap-0 py-0 min-w-[400px] w-full border-none shadow-none cursor-pointer hover:bg-gray-50 hover:scale-[1.01] transition-transform duration-150 bg-white rounded-sm">
+            {/* Header with type indicator */}
+            <div className={`px-4 py-2 text-white text-sm font-medium rounded-t-sm ${data.type === 'Product' ? 'bg-blue-400' : 'bg-green-600'}`}>
+                {data.type}
+            </div>
+
             <div
-                className="px-4 flex items-center gap-2 min-w-0 overflow-hidden"
+                className="px-4 py-4 flex items-center gap-2 min-w-0 overflow-hidden"
                 onClick={() => onEditItem(tag.id)}
             >
                 {/* First column: Tag */}
@@ -38,33 +43,37 @@ const ItemCard: React.FC<ItemCardProps> = ({
                     <div className="font-semibold text-gray-700 truncate">
                         {data.name ? data.name : `Tag #${tag.index}`}
                     </div>
-                    <div className="text-sm text-gray-600 truncate">
-                        <span className="font-medium">Size:</span> {dimensions}
-                    </div>
-                    {data.notes && (
-                        <div className="text-sm text-gray-600">
-                            <div className="text-xs text-gray-400 font-medium">Notes</div>
-                            <div className="truncate">{data.notes}</div>
+                    {data.type === 'Product' && (
+                        <div className="text-sm text-gray-600 truncate">
+                            <span className="font-medium">Size:</span> {dimensions}
                         </div>
                     )}
+
+                    <div className="text-sm text-gray-600">
+                        <div className="text-xs text-gray-400 font-medium">Notes</div>
+                        <div className="break-words">{data.notes}</div>
+                    </div>
+
                 </div>
 
                 {/* Third column: Quantity, Unit Price, Total Price */}
                 <div className="w-[35%] flex flex-col gap-1 text-right text-gray-800 overflow-hidden">
                     <div className="text-sm text-gray-600 truncate">
-                        {formatRupiah(data.unitPrice)} / unit
+                        {formatRupiah(data.unitPrice)} / {data.type === 'Product' ? 'unit' : 'service'}
                     </div>
-                    <div className="text-sm text-right">
-                        <span className="text-white bg-purple-800 rounded-lg px-2 py-1">
-                            x {data.quantity}
-                        </span>
-                    </div>
+                    {data.type === 'Product' && (
+                        <div className="text-sm text-right">
+                            <span className="text-white bg-purple-800 rounded-lg px-2 py-1">
+                                x {data.quantity}
+                            </span>
+                        </div>
+                    )}
                     <div className="font-bold truncate">
-                        Total {formatRupiah(data.quantity * data.unitPrice)}
+                        {formatRupiah(data.type === 'Product' ? data.quantity * data.unitPrice : data.unitPrice)}
                     </div>
                 </div>
             </div>
-            <div className="px-4">
+            <div className="px-4 mb-3">
                 <Separator />
             </div>
         </Card>

@@ -1,9 +1,9 @@
 
-import { Input } from './ui/input';
-import { Textarea } from './ui/textarea';
-import ImageWithTags from './ImageWithTags';
-import { Separator } from './ui/separator';
-import { Label } from './ui/label';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import ImageWithTags from '@/components/ImageWithTags';
+import { Separator } from '@/components/ui/separator';
+import { Label } from '@/components/ui/label';
 
 const MainImageSection = ({
   selectedImage,

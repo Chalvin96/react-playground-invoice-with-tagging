@@ -1,7 +1,7 @@
 
 import type { ImageTagItem } from '@/hooks/useTags';
 import type { ItemData } from '@/hooks/useItems';
-import ItemCard from './ItemCard';
+import ItemCard from '@/components/ItemCard';
 
 interface TaggedItemsSectionProps {
   tags: ImageTagItem[];
@@ -11,6 +11,7 @@ interface TaggedItemsSectionProps {
 
 const K_CONST_EMPTY_ROW_DATA: ItemData = {
   name: '',
+  type: 'Product',
   quantity: 0,
   unitPrice: 0,
   length: 0,
@@ -36,7 +37,7 @@ const TaggedItemsSection: React.FC<TaggedItemsSectionProps> = ({
             <p className="text-gray-500 text-sm">Click on the image to add tags and items</p>
           </div>
         ) : (
-          <div className="flex flex-col min-w-0 gap-2 w-full">
+          <div className="flex flex-col min-w-0 gap-3 w-full">
             {tags.map((tag) => {
               const data = itemData[tag.id] || K_CONST_EMPTY_ROW_DATA;
               return (
