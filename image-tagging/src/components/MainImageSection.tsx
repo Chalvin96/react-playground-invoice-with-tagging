@@ -20,7 +20,13 @@ const MainImageSection = ({
   tags: any[];
   dragTag: any;
 }) => {
-  if (!selectedImage) return <div className="w-[800px] h-full flex items-center justify-center bg-white border border-gray-200 shadow p-8">No Image Selected</div>;
+  if (!selectedImage) return (
+    <div className="w-[800px] h-full flex flex-col bg-white border border-gray-200 shadow p-8 gap-2">
+      <div className="flex-1 flex items-center justify-center h-[400px] w-[600px] mx-auto">
+        <div className="text-gray-500">No Image Selected</div>
+      </div>
+    </div>
+  );
 
   const handleImageClick = (x: number, y: number) => {
     onImageClick(selectedImage.id, x, y);
@@ -36,7 +42,7 @@ const MainImageSection = ({
             type="text"
             value={selectedImage.title}
             onChange={e => updateImageTitle(selectedImage.id, e.target.value)}
-            className="input input-ghost shadow-none md:text-2xl font-semibold bg-white border-none focus:ring-offset-0 focus:border-ring-white focus-visible:ring-0"
+            className="input input-ghost shadow-none md:text-2xl font-semibold bg-white border-none focus:ring-offset-0 focus:border-ring-white focus:visible:ring-0"
 
           />
         </div>
