@@ -63,7 +63,7 @@ const ItemCard: React.FC<ItemCardProps> = memo(({
                     </div>
                     {data.type === 'Product' && (
                         <div className="text-sm text-right">
-                            <span className="text-white bg-purple-800 rounded-lg px-2 py-1">
+                            <span className="text-white bg-purple-500 rounded-lg px-2 py-1">
                                 x {data.quantity}
                             </span>
                         </div>

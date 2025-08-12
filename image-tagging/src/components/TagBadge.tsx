@@ -13,7 +13,7 @@ const TagBadge: React.FC<TagBadgeProps> = memo(({
         <div
             className={`
         w-5 h-5 text-xs
-        bg-purple-600 text-white
+        bg-purple-500 text-white
         rounded-full 
         flex items-center justify-center 
         font-bold 
