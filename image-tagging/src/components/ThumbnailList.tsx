@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import ThumbnailItem from '@/components/ThumbnailItem';
 
@@ -24,7 +24,7 @@ const ThumbnailList = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editFileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -37,9 +37,9 @@ const ThumbnailList = ({
       };
       reader.readAsDataURL(file);
     }
-  };
+  }, [addImage]);
 
-  const handleEditFileSelect = (event: React.ChangeEvent<HTMLInputElement>, imageId: string) => {
+  const handleEditFileSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>, imageId: string) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -52,14 +52,39 @@ const ThumbnailList = ({
       };
       reader.readAsDataURL(file);
     }
-  };
+  }, [editImage]);
 
-  const handleEditImage = (imageId: string) => {
+  const handleEditImage = useCallback((imageId: string) => {
     editFileInputRef.current?.click();
     if (editFileInputRef.current) {
       editFileInputRef.current.setAttribute('data-image-id', imageId);
     }
-  };
+  }, []);
+
+  const handleAddImageClick = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
+  // Memoize the edit file change handler to prevent recreation
+  const handleEditFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const imageId = e.target.getAttribute('data-image-id');
+    if (imageId) {
+      handleEditFileSelect(e, imageId);
+    }
+  }, [handleEditFileSelect]);
+
+  const thumbnailItems = useMemo(() => {
+    return imageItemsWithTags.map((img) => (
+      <ThumbnailItem
+        key={img.id}
+        img={img}
+        isSelected={selectedImageId === img.id}
+        onSelect={setSelectedImageId}
+        onEdit={handleEditImage}
+        onDelete={deleteImage}
+      />
+    ));
+  }, [imageItemsWithTags, selectedImageId, setSelectedImageId, handleEditImage, deleteImage]);
 
   return (
     <div className="w-128 flex flex-col bg-white h-full border border-gray-200">
@@ -67,7 +92,7 @@ const ThumbnailList = ({
         <span className="font-semibold text-lg">Images</span>
         <Button
           className="bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 text-sm"
-          onClick={() => fileInputRef.current?.click()}
+          onClick={handleAddImageClick}
         >
           Add Image
         </Button>
@@ -83,12 +108,7 @@ const ThumbnailList = ({
           type="file"
           accept="image/*"
           className="hidden"
-          onChange={(e) => {
-            const imageId = e.target.getAttribute('data-image-id');
-            if (imageId) {
-              handleEditFileSelect(e, imageId);
-            }
-          }}
+          onChange={handleEditFileChange}
         />
       </div>
       <div className="flex-1 overflow-y-auto min-h-0">
@@ -96,16 +116,7 @@ const ThumbnailList = ({
           <div className="text-center py-16 text-gray-400">No Images</div>
         ) : (
           <div className="space-y-2 p-2">
-            {imageItemsWithTags.map((img) => (
-              <ThumbnailItem
-                key={img.id}
-                img={img}
-                isSelected={selectedImageId === img.id}
-                onSelect={setSelectedImageId}
-                onEdit={handleEditImage}
-                onDelete={deleteImage}
-              />
-            ))}
+            {thumbnailItems}
           </div>
         )}
       </div>

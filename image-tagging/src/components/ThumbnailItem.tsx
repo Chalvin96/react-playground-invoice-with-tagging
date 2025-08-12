@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { useState, useCallback, memo } from 'react';
+import { Button } from './ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { MoreHorizontal } from 'lucide-react';
 
 interface ThumbnailItemProps {
@@ -15,7 +15,7 @@ interface ThumbnailItemProps {
     onDelete: (id: string) => void;
 }
 
-const ThumbnailItem: React.FC<ThumbnailItemProps> = ({
+const ThumbnailItem: React.FC<ThumbnailItemProps> = memo(({
     img,
     isSelected,
     onSelect,
@@ -24,10 +24,30 @@ const ThumbnailItem: React.FC<ThumbnailItemProps> = ({
 }) => {
     const [openMenu, setOpenMenu] = useState(false);
 
+    const handleSelect = useCallback(() => {
+        onSelect(img.id);
+    }, [onSelect, img.id]);
+
+    const handleEdit = useCallback((e: React.MouseEvent) => {
+        e.stopPropagation();
+        onEdit(img.id);
+        setOpenMenu(false);
+    }, [onEdit, img.id]);
+
+    const handleDelete = useCallback((e: React.MouseEvent) => {
+        e.stopPropagation();
+        onDelete(img.id);
+        setOpenMenu(false);
+    }, [onDelete, img.id]);
+
+    const handleMenuToggle = useCallback((open: boolean) => {
+        setOpenMenu(open);
+    }, []);
+
     return (
         <div
             className={`rounded-s cursor-pointer flex flex-col gap-1 p-0 hover:bg-purple-50 transition ${isSelected ? 'bg-purple-100 border-2 border-purple-400' : ''}`}
-            onClick={() => onSelect(img.id)}
+            onClick={handleSelect}
             style={{ position: 'relative' }}
         >
             <>
@@ -35,11 +55,16 @@ const ThumbnailItem: React.FC<ThumbnailItemProps> = ({
                     src={img.imageBase64}
                     alt={img.title}
                     className="w-full h-24 object-cover rounded-s border-none"
+                    loading="lazy"
                 />
                 <div className="absolute top-1 right-1">
-                    <Popover open={openMenu} onOpenChange={setOpenMenu}>
+                    <Popover open={openMenu} onOpenChange={handleMenuToggle}>
                         <PopoverTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-200 bg-white/80 backdrop-blur-sm shadow-sm">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 hover:bg-gray-200 bg-white/80 backdrop-blur-sm shadow-sm"
+                            >
                                 <MoreHorizontal className="h-4 w-4 text-gray-800" />
                             </Button>
                         </PopoverTrigger>
@@ -47,22 +72,14 @@ const ThumbnailItem: React.FC<ThumbnailItemProps> = ({
                             <Button
                                 className="w-full justify-center hover:bg-purple-50 font-medium rounded-none"
                                 variant="ghost"
-                                onClick={e => {
-                                    e.stopPropagation();
-                                    onEdit(img.id);
-                                    setOpenMenu(false);
-                                }}
+                                onClick={handleEdit}
                             >
                                 Edit
                             </Button>
                             <Button
                                 className="w-full justify-center text-red-700 hover:text-red-800 hover:bg-red-50 font-medium rounded-none"
                                 variant="ghost"
-                                onClick={e => {
-                                    e.stopPropagation();
-                                    onDelete(img.id);
-                                    setOpenMenu(false);
-                                }}
+                                onClick={handleDelete}
                             >
                                 Delete
                             </Button>
@@ -75,6 +92,13 @@ const ThumbnailItem: React.FC<ThumbnailItemProps> = ({
             </div>
         </div>
     );
-};
+}, (prevProps, nextProps) => {
+    return (
+        prevProps.img.id === nextProps.img.id &&
+        prevProps.isSelected === nextProps.isSelected &&
+        prevProps.img.title === nextProps.img.title &&
+        prevProps.img.imageBase64 === nextProps.img.imageBase64
+    );
+});
 
 export default ThumbnailItem; 
