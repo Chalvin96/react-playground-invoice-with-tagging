@@ -30,7 +30,7 @@ const ThumbnailList = ({
       const reader = new FileReader();
 
       // Add image as base64 url for simplification
-      // TODO: Upload to s3 + add CDN
+      // Otherwise upload to s3 + add CDN
       reader.onload = (e) => {
         const result = e.target?.result as string;
         addImage(result, getFileNameWithoutExt(file.name));

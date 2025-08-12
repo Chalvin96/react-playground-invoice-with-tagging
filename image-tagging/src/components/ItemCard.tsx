@@ -2,7 +2,6 @@ import type { ImageTagItem } from '@/hooks/useTags';
 import type { ItemData } from '@/hooks/useItems';
 import { formatRupiah } from '@/lib/utils';
 import TagBadge from '@/components/TagBadge';
-import { Separator } from '@/components/ui/separator';
 import { Card } from '@/components/ui/card';
 
 interface ItemCardProps {
@@ -41,7 +40,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
                 {/* Second column: Title, Dimension, Notes */}
                 <div className="w-[60%] flex flex-col gap-1 overflow-hidden">
                     <div className="font-semibold text-gray-700 truncate">
-                        {data.name ? data.name : `Tag #${tag.index}`}
+                        {data.name ? data.name : `Item #${tag.index}`}
                     </div>
                     {data.type === 'Product' && (
                         <div className="text-sm text-gray-600 truncate">
@@ -69,13 +68,11 @@ const ItemCard: React.FC<ItemCardProps> = ({
                         </div>
                     )}
                     <div className="font-bold truncate">
-                        {formatRupiah(data.type === 'Product' ? data.quantity * data.unitPrice : data.unitPrice)}
+                        Total {formatRupiah(data.type === 'Product' ? data.quantity * data.unitPrice : data.unitPrice)}
                     </div>
                 </div>
             </div>
-            <div className="px-4 mb-3">
-                <Separator />
-            </div>
+
         </Card>
     );
 };

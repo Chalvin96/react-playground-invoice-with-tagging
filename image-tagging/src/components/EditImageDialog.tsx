@@ -51,7 +51,7 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
 
     const handleSaveChanges = () => {
         const finalImageBase64 = previewUrl || currentImageBase64;
-        onEditImage(finalImageBase64, currentTitle); // Keep the current title
+        onEditImage(finalImageBase64, currentTitle); 
         // Reset form
         setPreviewUrl(null);
         if (fileInputRef.current) {
@@ -76,7 +76,8 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
         setIsOpen(false);
     };
 
-    const isFormValid = true; // Always valid since we're not editing title
+    // Always valid since we're not editing title
+    const isFormValid = true; 
 
     return (
         <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>

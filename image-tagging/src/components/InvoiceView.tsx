@@ -21,7 +21,6 @@ interface InvoiceViewProps {
 }
 
 const InvoiceView: React.FC<InvoiceViewProps> = ({ imageItemsWithTags, itemData }) => {
-    // Collect all items from all images
     const allItems: Array<{
         imageTitle: string;
         tagIndex: number;
@@ -31,7 +30,7 @@ const InvoiceView: React.FC<InvoiceViewProps> = ({ imageItemsWithTags, itemData 
     imageItemsWithTags.forEach((image) => {
         image.tags.forEach((tag) => {
             const data = itemData[tag.id];
-            if (data) { // Include all items that have data (even if name is empty)
+            if (data) {
                 allItems.push({
                     imageTitle: image.title || 'Untitled',
                     tagIndex: tag.index,
@@ -41,7 +40,6 @@ const InvoiceView: React.FC<InvoiceViewProps> = ({ imageItemsWithTags, itemData 
         });
     });
 
-    // Calculate totals
     const grandTotal = allItems.reduce((sum, item) => {
         return sum + (item.itemData.quantity * item.itemData.unitPrice);
     }, 0);
@@ -58,7 +56,7 @@ const InvoiceView: React.FC<InvoiceViewProps> = ({ imageItemsWithTags, itemData 
     };
 
     return (
-        <div className="w-full max-w-6xl mx-auto bg-white rounded-lg border border-gray-200 shadow p-8 h-full overflow-y-auto">
+        <div className="invoice-container w-full max-w-6xl mx-auto bg-white rounded-lg border border-gray-200 shadow p-8 h-full overflow-y-auto print:shadow-none print:border-none print:h-auto">
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Invoice</h1>
             </div>
@@ -71,11 +69,11 @@ const InvoiceView: React.FC<InvoiceViewProps> = ({ imageItemsWithTags, itemData 
                 </div>
             ) : (
                 <>
-                    <Table>
+                    <Table className="table-fixed">
                         <TableHeader>
                             <TableRow>
                                 <TableHead className="w-[80px]">Tag #</TableHead>
-                                <TableHead>Item Details</TableHead>
+                                <TableHead className="w-[400px]">Item Details</TableHead>
                                 <TableHead className="w-[120px] text-right">Unit Price</TableHead>
                                 <TableHead className="w-[80px] text-center">Qty</TableHead>
                                 <TableHead className="w-[120px] text-right">Total</TableHead>
@@ -86,15 +84,15 @@ const InvoiceView: React.FC<InvoiceViewProps> = ({ imageItemsWithTags, itemData 
                                 const totalPrice = item.itemData.quantity * item.itemData.unitPrice;
                                 const dimensions = formatDimensions(item.itemData);
                                 return (
-                                    <TableRow key={index} className="hover:bg-gray-50">
+                                    <TableRow key={index} className="hover:bg-gray-50 print:break-inside-avoid">
                                         <TableCell className="text-center">
                                             <div className="mx-auto">
                                                 <TagBadge index={item.tagIndex} />
                                             </div>
                                         </TableCell>
-                                        <TableCell>
-                                            <div className="flex flex-col gap-1">
-                                                <div className="font-medium text-gray-900">
+                                        <TableCell className="w-[400px] max-w-[400px] overflow-hidden">
+                                            <div className="flex flex-col gap-1 w-full">
+                                                <div className="font-medium text-gray-900 break-words">
                                                     {item.itemData.name || `Tag #${item.tagIndex} (Unnamed Item)`}
                                                 </div>
                                                 {dimensions && (
@@ -103,7 +101,7 @@ const InvoiceView: React.FC<InvoiceViewProps> = ({ imageItemsWithTags, itemData 
                                                     </div>
                                                 )}
                                                 {item.itemData.notes && (
-                                                    <div className="text-sm text-gray-600 mt-1">
+                                                    <div className="text-sm text-gray-600 mt-1 break-words overflow-wrap-anywhere whitespace-pre-wrap">
                                                         {item.itemData.notes}
                                                     </div>
                                                 )}
@@ -122,7 +120,7 @@ const InvoiceView: React.FC<InvoiceViewProps> = ({ imageItemsWithTags, itemData 
                     </Table>
 
                     {/* Summary Section */}
-                    <div className="mt-8 border-t pt-6">
+                    <div className="mt-8 border-t pt-6 print:break-inside-avoid">
                         <div className="flex justify-end">
                             <div className="w-80">
                                 <div className="flex justify-between items-center py-2 border-b">

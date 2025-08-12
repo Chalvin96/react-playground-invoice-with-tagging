@@ -26,7 +26,7 @@ const TaggedItemsSection: React.FC<TaggedItemsSectionProps> = ({
   onEditItem
 }) => {
   return (
-    <div className="w-full flex flex-col h-full overflow-x-auto overflow-y-hidden">
+    <div className="w-full flex flex-col h-full overflow-x-auto overflow-y-auto">
       <div className="justify-between p-4 top-0 ">
         <span className="font-semibold text-lg">Item List</span>
       </div>

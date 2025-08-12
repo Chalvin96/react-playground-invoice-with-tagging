@@ -20,7 +20,6 @@ const App: React.FC = () => {
   const [isAddingNewItem, setIsAddingNewItem] = useState(false);
   const [currentView, setCurrentView] = useState<'editor' | 'invoice'>('editor');
 
-  // Memoize images with tags
   const imageItemsWithTags = useMemo(() => {
     return imageItems.map(imageItem => {
       const filteredImageTagItems = imageTagItems.filter(
@@ -33,18 +32,15 @@ const App: React.FC = () => {
     });
   }, [imageItems, imageTagItems]);
 
-  // Find selected image
   const selectedImage = imageItemsWithTags.find(img => img.id === selectedImageId) || imageItemsWithTags[0];
   const selectedTags = selectedImage ? selectedImage.tags : [];
 
-  // Set default selected image on first load or when images change
   useEffect(() => {
     if (imageItemsWithTags.length > 0 && (!selectedImageId || !imageItemsWithTags.some(img => img.id === selectedImageId))) {
       setSelectedImageId(imageItemsWithTags[0].id);
     }
   }, [imageItemsWithTags, selectedImageId]);
 
-  // Add tag and open add modal for new tag
   const handleAddTag = (baseImageId: string, x: number, y: number) => {
     const newTagId = addTag(baseImageId, x, y);
     addItemForTag(newTagId);
@@ -52,7 +48,6 @@ const App: React.FC = () => {
     setIsAddingNewItem(true);
   };
 
-  // Handle edit item from sidebar
   const handleEditItem = (tagId: string) => {
     setEditItemTagId(tagId);
     setIsAddingNewItem(false);
@@ -89,11 +84,8 @@ const App: React.FC = () => {
   };
 
   const handleDeleteImage = (imageId: string) => {
-    // Remove associated items first (needs imageTagItems for reference)
     removeItemsForImage(imageId, imageTagItems);
-    // Remove associated tags (this will reindex remaining tags)
     removeTagsForImage(imageId);
-    // Finally delete the image
     deleteImage(imageId);
   };
 
