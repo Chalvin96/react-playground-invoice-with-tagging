@@ -3,6 +3,7 @@ import type { ItemData } from '@/hooks/useItems';
 import { formatRupiah } from '@/lib/utils';
 import TagBadge from '@/components/TagBadge';
 import { Card } from '@/components/ui/card';
+import { memo } from 'react';
 
 interface ItemCardProps {
     tag: ImageTagItem;
@@ -10,7 +11,7 @@ interface ItemCardProps {
     onEditItem: (tagId: string) => void;
 }
 
-const ItemCard: React.FC<ItemCardProps> = ({
+const ItemCard: React.FC<ItemCardProps> = memo(({
     tag,
     data,
     onEditItem
@@ -75,6 +76,6 @@ const ItemCard: React.FC<ItemCardProps> = ({
 
         </Card>
     );
-};
+});
 
 export default ItemCard; 

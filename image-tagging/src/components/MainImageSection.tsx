@@ -4,8 +4,9 @@ import { Textarea } from '@/components/ui/textarea';
 import ImageWithTags from '@/components/ImageWithTags';
 import { Separator } from '@/components/ui/separator';
 import { Label } from '@/components/ui/label';
+import { memo, useCallback } from 'react';
 
-const MainImageSection = ({
+const MainImageSection = memo(({
   selectedImage,
   updateImageTitle,
   updateImageNotes,
@@ -28,9 +29,9 @@ const MainImageSection = ({
     </div>
   );
 
-  const handleImageClick = (x: number, y: number) => {
+  const handleImageClick = useCallback((x: number, y: number) => {
     onImageClick(selectedImage.id, x, y);
-  };
+  }, [onImageClick, selectedImage.id]);
 
   return (
     <div className="flex flex-col bg-white border border-gray-200 shadow p-8 gap-2 w-[800px] h-full">
@@ -70,6 +71,6 @@ const MainImageSection = ({
       </div>
     </div>
   );
-};
+});
 
 export default MainImageSection; 

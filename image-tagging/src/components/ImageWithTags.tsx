@@ -1,7 +1,7 @@
-import { useRef } from 'react';
+import { useRef, memo, useCallback } from 'react';
 import Tag from '@/components/Tag';
 
-const ImageWithTags = ({
+const ImageWithTags = memo(({
   imageBase64,
   title,
   tags,
@@ -16,13 +16,13 @@ const ImageWithTags = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     const xPercent = ((e.clientX - rect.left) / rect.width) * 100;
     const yPercent = ((e.clientY - rect.top) / rect.height) * 100;
     onImageClick(xPercent, yPercent);
-  };
+  }, [onImageClick]);
 
   return (
     <div ref={containerRef} className="relative w-[600px] h-[400px] mx-auto" onClick={handleClick}>
@@ -44,6 +44,6 @@ const ImageWithTags = ({
       ))}
     </div>
   );
-};
+});
 
 export default ImageWithTags; 

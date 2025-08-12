@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import {
     Dialog,
     DialogContent,
@@ -22,11 +22,11 @@ interface EditImageDialogProps {
 }
 
 const EditImageDialog: React.FC<EditImageDialogProps> = ({
-    currentTitle,
-    currentImageBase64,
-    onEditImage,
-    trigger,
     open,
+    currentImageBase64,
+    currentTitle,
+    trigger,
+    onEditImage,
     onOpenChange
 }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -37,7 +37,7 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
     const dialogOpen = isControlled ? open : isOpen;
     const setDialogOpen = isControlled ? onOpenChange : setIsOpen;
 
-    const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
             const reader = new FileReader();
@@ -47,37 +47,37 @@ const EditImageDialog: React.FC<EditImageDialogProps> = ({
             };
             reader.readAsDataURL(file);
         }
-    };
+    }, []);
 
-    const handleSaveChanges = () => {
+    const handleSaveChanges = useCallback(() => {
         const finalImageBase64 = previewUrl || currentImageBase64;
-        onEditImage(finalImageBase64, currentTitle); 
+        onEditImage(finalImageBase64, currentTitle);
         // Reset form
         setPreviewUrl(null);
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
         setIsOpen(false);
-    };
+    }, [previewUrl, currentImageBase64, currentTitle, onEditImage]);
 
-    const handleOpenChange = (open: boolean) => {
+    const handleOpenChange = useCallback((open: boolean) => {
         setDialogOpen(open);
         setPreviewUrl(null);
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
-    };
+    }, [setDialogOpen]);
 
-    const handleCancel = () => {
+    const handleCancel = useCallback(() => {
         setPreviewUrl(null);
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
         }
         setIsOpen(false);
-    };
+    }, []);
 
     // Always valid since we're not editing title
-    const isFormValid = true; 
+    const isFormValid = true;
 
     return (
         <Dialog open={dialogOpen} onOpenChange={handleOpenChange}>

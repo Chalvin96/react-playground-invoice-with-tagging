@@ -1,32 +1,30 @@
-import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useState, useCallback, memo } from 'react';
+import type { ItemData } from '@/hooks/useItems';
 
-interface ItemData {
-  name: string;
-  type: 'Product' | 'Service';
-  quantity: number;
-  unitPrice: number;
-  length: number;
-  width: number;
-  height: number;
-  notes: string;
+interface AddItemDialogProps {
+  open: boolean;
+  itemData: ItemData | null;
+  onOpenChange: (open: boolean) => void;
+  onSave: (data: ItemData) => void;
+  onCancel: () => void;
 }
 
-const AddItemDialog = ({
+const AddItemDialog = memo(({
   open,
-  onOpenChange,
   itemData,
+  onOpenChange,
   onSave,
   onCancel
 }: {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
   itemData: ItemData | null;
+  onOpenChange: (open: boolean) => void;
   onSave: (data: ItemData) => void;
   onCancel: () => void;
 }) => {
@@ -41,41 +39,24 @@ const AddItemDialog = ({
     notes: ''
   });
 
-  useEffect(() => {
-    if (itemData) {
-      setEditData(itemData);
-    } else {
-      setEditData({
-        name: '',
-        type: 'Product',
-        quantity: 1,
-        unitPrice: 0,
-        length: 0,
-        width: 0,
-        height: 0,
-        notes: ''
-      });
-    }
-  }, [itemData, open]);
-
-  const handleSave = () => {
+  const handleSave = useCallback(() => {
     onSave(editData);
     onOpenChange(false);
-  };
+  }, [onSave, editData, onOpenChange]);
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     onCancel();
     onOpenChange(false);
-  };
+  }, [onCancel, onOpenChange]);
 
-  const handleNumberChange = (field: keyof ItemData, value: string) => {
+  const handleNumberChange = useCallback((field: keyof ItemData, value: string) => {
     const num = value === '' ? 0 : Number(value);
     if (!isNaN(num)) {
       setEditData({ ...editData, [field]: num });
     }
-  };
+  }, [editData]);
 
-  const handleTypeChange = (newType: 'Product' | 'Service') => {
+  const handleTypeChange = useCallback((newType: 'Product' | 'Service') => {
     setEditData((prev: ItemData) => ({
       ...prev,
       type: newType,
@@ -83,10 +64,8 @@ const AddItemDialog = ({
       length: newType === 'Service' ? 0 : prev.length,
       width: newType === 'Service' ? 0 : prev.width,
       height: newType === 'Service' ? 0 : prev.height,
-      // Reset quantity to 1 if switching to Product
-      quantity: newType === 'Product' ? (prev.quantity || 1) : 1
     }));
-  };
+  }, []);
 
   return (
     <Dialog open={open} onOpenChange={(open) => !open && handleCancel()}>
@@ -232,6 +211,8 @@ const AddItemDialog = ({
       </DialogContent>
     </Dialog>
   );
-};
+});
+
+AddItemDialog.displayName = 'AddItemDialog';
 
 export default AddItemDialog; 
