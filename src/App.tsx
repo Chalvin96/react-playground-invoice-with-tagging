@@ -76,10 +76,10 @@ const App: React.FC = () => {
     setIsAddingNewItem(false);
   };
 
-  const handleEditImage = (imageId: string, newImageBase64: string) => {
+  const handleEditImage = (imageId: string, newImageUrl: string) => {
     const currentImage = imageItems.find(img => img.id === imageId);
     if (currentImage) {
-      updateImage(imageId, newImageBase64, currentImage.title);
+      updateImage(imageId, newImageUrl, currentImage.title);
     }
   };
 
@@ -135,7 +135,7 @@ const App: React.FC = () => {
 
       {isAddingNewItem ? (
         <AddItemDialog
-          open={!!editItemTagId}
+          open={isAddingNewItem}
           onOpenChange={open => { if (!open) handleCloseEditItem(); }}
           itemData={editItemTagId ? itemData[editItemTagId] : null}
           onSave={data => editItemTagId && handleEditItemSave(editItemTagId, data)}

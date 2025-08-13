@@ -1,6 +1,7 @@
 import { useRef, useCallback, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import ThumbnailItem from '@/components/ThumbnailItem';
+import { MAX_IMAGE_SIZE_BYTES } from '@/constants';
 
 function getFileNameWithoutExt(filename: string) {
   return filename.replace(/\.[^/.]+$/, "");
@@ -18,9 +19,9 @@ const ThumbnailList = ({
   imageItemsWithTags: any[];
   selectedImageId: string | null;
   setSelectedImageId: (id: string) => void;
-  addImage: (base64: string, title: string) => void;
+  addImage: (url: string, title: string) => void;
   deleteImage: (id: string) => void;
-  editImage: (id: string, newImageBase64: string) => void;
+  editImage: (id: string, newImageUrl: string) => void;
   moveImage: (dragId: string, hoverId: string) => void;
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -40,8 +41,7 @@ const ThumbnailList = ({
   }, []);
 
   const validateFile = useCallback((file: File): boolean => {
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    if (file.size > maxSize) {
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
       alert('File size too large. Please select a file smaller than 10MB.');
       return false;
     }
@@ -92,7 +92,7 @@ const ThumbnailList = ({
   }, []);
 
   const thumbnailItems = useMemo(() => {
-    return imageItemsWithTags.map((img) => (
+    return imageItemsWithTags.map((img, index) => (
       <ThumbnailItem
         key={img.id}
         img={img}
@@ -101,6 +101,7 @@ const ThumbnailList = ({
         onEdit={handleEditImage}
         onDelete={deleteImage}
         onMove={moveImage}
+        index={index}
       />
     ));
   }, [imageItemsWithTags, selectedImageId, setSelectedImageId, handleEditImage, deleteImage, moveImage]);

@@ -2,13 +2,13 @@ import { useRef, memo, useCallback } from 'react';
 import Tag from '@/components/Tag';
 
 const ImageWithTags = memo(({
-  imageBase64,
+  imageUrl,
   title,
   tags,
   onImageClick,
   dragTag
 }: {
-  imageBase64: string;
+  imageUrl: string;
   title: string;
   tags: any[];
   onImageClick: (x: number, y: number) => void;
@@ -27,7 +27,7 @@ const ImageWithTags = memo(({
   return (
     <div ref={containerRef} className="relative w-[700px] h-[400px] mx-auto" onClick={handleClick}>
       <img
-        src={imageBase64}
+        src={imageUrl}
         alt={title}
         className="w-full h-full object-contain rounded-md"
       />

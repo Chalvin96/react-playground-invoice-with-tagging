@@ -1,13 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-
-export interface ImageTagItem {
-    id: string;
-    x: number;
-    y: number;
-    baseImageId: string;
-    index: number;
-}
+import type { ImageTagItem } from '@/types/tag';
 
 export const useTags = (imageItems: any[]) => {
     const [imageTagItems, setImageTagItems] = useState<ImageTagItem[]>([]);

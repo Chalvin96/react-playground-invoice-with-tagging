@@ -1,4 +1,4 @@
-import type { ImageTagItem } from '@/hooks/useTags';
+import type { ImageTagItem } from '@/types/tag';
 import type { ItemData } from '@/hooks/useItems';
 import {
     Table,
@@ -56,7 +56,7 @@ const InvoiceView: React.FC<InvoiceViewProps> = ({ imageItemsWithTags, itemData 
     };
 
     return (
-        <div className="invoice-container w-full max-w-6xl mx-auto bg-white rounded-lg border border-gray-200 shadow p-8 h-full overflow-y-auto print:shadow-none print:border-none print:h-auto">
+        <div className="invoice-container w-full max-w-6xl mx-auto bg-white rounded-lg border border-gray-200 shadow p-8 min-h-0 overflow-y-auto print:w-full print:max-w-none print:overflow-visible print:h-auto print:shadow-none print:border-none">
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">Invoice</h1>
             </div>

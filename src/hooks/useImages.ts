@@ -1,13 +1,6 @@
 import { useState, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-
-export interface ImageItem {
-    id: string;
-    imageBase64: string;
-    timestamp: number;
-    title: string;
-    notes: string;
-}
+import type { ImageItem } from '@/types/image';
 
 export const useImages = () => {
     const [imageItems, setImageItems] = useState<ImageItem[]>([]);
@@ -22,13 +15,14 @@ export const useImages = () => {
         }
     }, []);
 
-    const addImage = useCallback((imageBase64: string, title: string = '') => {
+    const addImage = useCallback((imageUrl: string, title: string = '') => {
         const newImageItem: ImageItem = {
             id: uuidv4(),
-            imageBase64,
+            imageUrl,
             timestamp: Date.now(),
             title,
-            notes: ''
+            notes: '',
+            order: Date.now(),
         };
         setImageItems(prev => [...prev, newImageItem]);
     }, []);
@@ -37,7 +31,7 @@ export const useImages = () => {
         setImageItems(prev => {
             const toDelete = prev.find(item => item.id === id);
             if (toDelete) {
-                revokeIfBlobUrl(toDelete.imageBase64);
+                revokeIfBlobUrl(toDelete.imageUrl);
             }
             return prev.filter(item => item.id !== id);
         });
@@ -55,17 +49,16 @@ export const useImages = () => {
         ));
     }, []);
 
-    const updateImage = useCallback((imageId: string, imageBase64: string, title: string) => {
+    const updateImage = useCallback((imageId: string, imageUrl: string, title: string) => {
         setImageItems(prev => prev.map(item => {
             if (item.id === imageId) {
-                revokeIfBlobUrl(item.imageBase64);
-                return { ...item, imageBase64, title };
+                revokeIfBlobUrl(item.imageUrl);
+                return { ...item, imageUrl, title };
             }
             return item;
         }));
     }, [revokeIfBlobUrl]);
 
-    // Note: blob URLs are revoked on update and delete to avoid leaks
     const moveImage = useCallback((dragId: string, hoverId: string) => {
         setImageItems(prev => {
             const current = [...prev];
@@ -77,9 +70,11 @@ export const useImages = () => {
             const updated = [...current];
             const [removed] = updated.splice(dragIndex, 1);
             updated.splice(hoverIndex, 0, removed);
-            return updated;
+            // Reassign incremental order to maintain stability
+            return updated.map((img, idx) => ({ ...img, order: idx }));
         });
     }, []);
+
 
     return {
         imageItems,

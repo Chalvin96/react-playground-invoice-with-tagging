@@ -52,7 +52,7 @@ const MainImageSection = memo(({
       {/* Image with tags */}
       <div className="flex-1 flex items-center justify-center mx-auto">
         <ImageWithTags
-          imageBase64={selectedImage.imageBase64}
+          imageUrl={selectedImage.imageUrl}
           title={selectedImage.title}
           tags={tags}
           onImageClick={handleImageClick}

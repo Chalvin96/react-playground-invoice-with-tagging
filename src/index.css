@@ -114,7 +114,40 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@media print {
+
+  html,
+  body,
+  #root {
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+  }
+
+  .invoice-container {
+    page-break-inside: auto;
+  }
+
+  .invoice-container table {
+    page-break-inside: auto;
+  }
+
+  .invoice-container tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  .invoice-container thead {
+    display: table-header-group;
+  }
+
+  .invoice-container tfoot {
+    display: table-footer-group;
   }
 }
