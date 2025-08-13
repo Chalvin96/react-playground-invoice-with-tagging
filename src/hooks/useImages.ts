@@ -12,8 +12,17 @@ export interface ImageItem {
 export const useImages = () => {
     const [imageItems, setImageItems] = useState<ImageItem[]>([]);
 
+    const revokeIfBlobUrl = useCallback((url: string) => {
+        try {
+            if (typeof url === 'string' && url.startsWith('blob:')) {
+                URL.revokeObjectURL(url);
+            }
+        } catch {
+            // no-op
+        }
+    }, []);
+
     const addImage = useCallback((imageBase64: string, title: string = '') => {
-        console.log('useImages ADDING IMAGE', imageBase64, title);
         const newImageItem: ImageItem = {
             id: uuidv4(),
             imageBase64,
@@ -25,8 +34,14 @@ export const useImages = () => {
     }, []);
 
     const deleteImage = useCallback((id: string) => {
-        setImageItems(prev => prev.filter(item => item.id !== id));
-    }, []);
+        setImageItems(prev => {
+            const toDelete = prev.find(item => item.id === id);
+            if (toDelete) {
+                revokeIfBlobUrl(toDelete.imageBase64);
+            }
+            return prev.filter(item => item.id !== id);
+        });
+    }, [revokeIfBlobUrl]);
 
     const updateImageTitle = useCallback((imageId: string, title: string) => {
         setImageItems(prev => prev.map(item =>
@@ -41,10 +56,16 @@ export const useImages = () => {
     }, []);
 
     const updateImage = useCallback((imageId: string, imageBase64: string, title: string) => {
-        setImageItems(prev => prev.map(item =>
-            item.id === imageId ? { ...item, imageBase64, title } : item
-        ));
-    }, []);
+        setImageItems(prev => prev.map(item => {
+            if (item.id === imageId) {
+                revokeIfBlobUrl(item.imageBase64);
+                return { ...item, imageBase64, title };
+            }
+            return item;
+        }));
+    }, [revokeIfBlobUrl]);
+
+    // Note: blob URLs are revoked on update and delete to avoid leaks
 
     return {
         imageItems,

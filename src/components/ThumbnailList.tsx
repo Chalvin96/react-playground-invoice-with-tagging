@@ -1,4 +1,4 @@
-import { useRef, useCallback, useMemo } from 'react';
+import { useRef, useCallback, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import ThumbnailItem from '@/components/ThumbnailItem';
 
@@ -23,56 +23,71 @@ const ThumbnailList = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editFileInputRef = useRef<HTMLInputElement>(null);
+  const editingImageIdRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      // Reset file inputs on cleanup
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      if (editFileInputRef.current) {
+        editFileInputRef.current.value = '';
+      }
+    };
+  }, []);
+
+  const validateFile = useCallback((file: File): boolean => {
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if (file.size > maxSize) {
+      alert('File size too large. Please select a file smaller than 10MB.');
+      return false;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      alert('Please select a valid image file.');
+      return false;
+    }
+
+    return true;
+  }, []);
 
   const handleFileSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    console.log('file', file);
-    if (file) {
-      const reader = new FileReader();
-      console.log('READING', file);
-      // Add image as base64 url for simplification
-      // Otherwise upload to s3 + add CDN
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        addImage(result, getFileNameWithoutExt(file.name));
-      };
-      reader.readAsDataURL(file);
+    if (file && validateFile(file)) {
+      const objectUrl = URL.createObjectURL(file);
+      addImage(objectUrl, getFileNameWithoutExt(file.name));
     }
-  }, [addImage]);
 
-  const handleEditFileSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>, imageId: string) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        editImage(imageId, result);
-        if (editFileInputRef.current) {
-          editFileInputRef.current.value = '';
-        }
-      };
-      reader.readAsDataURL(file);
+    if (event.target) {
+      event.target.value = '';
     }
-  }, [editImage]);
+  }, [addImage, validateFile]);
+
+  const handleEditFileSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    const imageId = editingImageIdRef.current;
+
+    if (file && imageId && validateFile(file)) {
+      const objectUrl = URL.createObjectURL(file);
+      editImage(imageId, objectUrl);
+    }
+
+    // Reset the input and clear the editing reference
+    if (event.target) {
+      event.target.value = '';
+    }
+    editingImageIdRef.current = null;
+  }, [editImage, validateFile]);
 
   const handleEditImage = useCallback((imageId: string) => {
+    editingImageIdRef.current = imageId;
     editFileInputRef.current?.click();
-    if (editFileInputRef.current) {
-      editFileInputRef.current.setAttribute('data-image-id', imageId);
-    }
   }, []);
 
   const handleAddImageClick = useCallback(() => {
     fileInputRef.current?.click();
   }, []);
-
-  // Memoize the edit file change handler to prevent recreation
-  const handleEditFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const imageId = e.target.getAttribute('data-image-id');
-    if (imageId) {
-      handleEditFileSelect(e, imageId);
-    }
-  }, [handleEditFileSelect]);
 
   const thumbnailItems = useMemo(() => {
     return imageItemsWithTags.map((img) => (
@@ -88,7 +103,7 @@ const ThumbnailList = ({
   }, [imageItemsWithTags, selectedImageId, setSelectedImageId, handleEditImage, deleteImage]);
 
   return (
-    <div className="w-128 flex flex-col bg-white h-full border border-gray-200">
+    <div className="w-64 shrink-0 flex flex-col bg-white h-full border border-gray-200 overflow-hidden">
       <div className="flex items-center justify-between p-4 border-b bg-white z-10 flex-shrink-0">
         <span className="font-semibold text-lg">Images</span>
         <Button
@@ -109,7 +124,7 @@ const ThumbnailList = ({
           type="file"
           accept="image/*"
           className="hidden"
-          onChange={handleEditFileChange}
+          onChange={handleEditFileSelect}
         />
       </div>
       <div className="flex-1 overflow-y-auto min-h-0">
@@ -125,4 +140,4 @@ const ThumbnailList = ({
   );
 };
 
-export default ThumbnailList; 
+export default ThumbnailList;
