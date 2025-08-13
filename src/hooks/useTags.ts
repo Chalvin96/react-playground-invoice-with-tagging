@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface ImageTagItem {
@@ -16,11 +16,10 @@ export const useTags = (imageItems: any[]) => {
     const reindexTags = useCallback((tags: ImageTagItem[]): ImageTagItem[] => {
         return tags
             .sort((a, b) => {
-                // Sort by image timestamp first, then by original index
-                const imageA = imageItems.find(img => img.id === a.baseImageId);
-                const imageB = imageItems.find(img => img.id === b.baseImageId);
-                if (imageA && imageB && imageA.timestamp !== imageB.timestamp) {
-                    return imageA.timestamp - imageB.timestamp;
+                const orderA = imageItems.findIndex(img => img.id === a.baseImageId);
+                const orderB = imageItems.findIndex(img => img.id === b.baseImageId);
+                if (orderA !== orderB) {
+                    return orderA - orderB;
                 }
                 return a.index - b.index;
             })
@@ -30,25 +29,30 @@ export const useTags = (imageItems: any[]) => {
             }));
     }, [imageItems]);
 
+    // When image order changes, reindex all tags to maintain consistent numbering
+    useEffect(() => {
+        setImageTagItems(prev => reindexTags(prev));
+    }, [imageItems, reindexTags]);
+
     const addTag = useCallback((baseImageId: string, x: number, y: number) => {
         let newTagId: string;
         setImageTagItems(prev => {
-        const tagsForImage = prev.filter(tag => tag.baseImageId === baseImageId);
-        const maxIndex = tagsForImage.length > 0 ? Math.max(...tagsForImage.map(tag => tag.index)) : 0;
+            const tagsForImage = prev.filter(tag => tag.baseImageId === baseImageId);
+            const maxIndex = tagsForImage.length > 0 ? Math.max(...tagsForImage.map(tag => tag.index)) : 0;
 
-        const newImageTagItem: ImageTagItem = {
-            id: uuidv4(),
-            x,
-            y,
-            baseImageId,
-            index: maxIndex + 1
-        };
+            const newImageTagItem: ImageTagItem = {
+                id: uuidv4(),
+                x,
+                y,
+                baseImageId,
+                index: maxIndex + 1
+            };
 
-        newTagId = newImageTagItem.id;
-        const allTags = [...prev, newImageTagItem];
-        const reindexedTags = reindexTags(allTags);
-        
-        return reindexedTags;
+            newTagId = newImageTagItem.id;
+            const allTags = [...prev, newImageTagItem];
+            const reindexedTags = reindexTags(allTags);
+
+            return reindexedTags;
         });
         return newTagId!;
     }, [reindexTags]);

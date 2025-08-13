@@ -25,7 +25,7 @@ const ImageWithTags = memo(({
   }, [onImageClick]);
 
   return (
-    <div ref={containerRef} className="relative w-[600px] h-[400px] mx-auto" onClick={handleClick}>
+    <div ref={containerRef} className="relative w-[700px] h-[400px] mx-auto" onClick={handleClick}>
       <img
         src={imageBase64}
         alt={title}

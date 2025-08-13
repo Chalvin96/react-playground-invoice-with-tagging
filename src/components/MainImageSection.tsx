@@ -22,7 +22,7 @@ const MainImageSection = memo(({
   dragTag: any;
 }) => {
   if (!selectedImage) return (
-    <div className="w-[800px] h-full flex flex-col bg-white border border-gray-200 shadow p-8 gap-2">
+    <div className="w-[850px] shrink-0 h-full flex flex-col bg-white border border-gray-200 shadow p-8 gap-2">
       <div className="flex-1 flex items-center justify-center h-[400px] w-[600px] mx-auto">
         <div className="text-gray-500">No Image Selected</div>
       </div>
@@ -34,7 +34,7 @@ const MainImageSection = memo(({
   }, [onImageClick, selectedImage.id]);
 
   return (
-    <div className="flex flex-col bg-white border border-gray-200 shadow p-8 gap-2 w-[800px] h-full">
+    <div className="flex flex-col bg-white border border-gray-200 shadow p-8 gap-2 w-[850px] shrink-0 h-full">
       {/* Title input */}
       <div className="flex items-center gap-2">
         <div className="grid w-full max-w-sm items-center gap-3">
@@ -50,7 +50,7 @@ const MainImageSection = memo(({
       </div>
       <Separator />
       {/* Image with tags */}
-      <div className="flex-1 flex items-center justify-center h-[400px] w-[600px] mx-auto">
+      <div className="flex-1 flex items-center justify-center mx-auto">
         <ImageWithTags
           imageBase64={selectedImage.imageBase64}
           title={selectedImage.title}
