@@ -11,7 +11,7 @@ import Footer from '@/components/Footer';
 import InvoiceView from '@/components/InvoiceView';
 
 const App: React.FC = () => {
-  const { imageItems, addImage, deleteImage, updateImageTitle, updateImageNotes, updateImage } = useImages();
+  const { imageItems, addImage, deleteImage, updateImageTitle, updateImageNotes, updateImage, moveImage } = useImages();
   const { imageTagItems, addTag, removeTag, dragTag, removeTagsForImage } = useTags(imageItems);
   const { itemData, updateItemData, removeItemData, removeItemsForImage, addItemForTag } = useItems();
 
@@ -101,6 +101,7 @@ const App: React.FC = () => {
               addImage={addImage}
               deleteImage={handleDeleteImage}
               editImage={handleEditImage}
+              moveImage={moveImage}
             />
             <MainImageSection
               selectedImage={selectedImage}

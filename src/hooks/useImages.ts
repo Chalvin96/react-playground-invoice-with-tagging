@@ -66,6 +66,20 @@ export const useImages = () => {
     }, [revokeIfBlobUrl]);
 
     // Note: blob URLs are revoked on update and delete to avoid leaks
+    const moveImage = useCallback((dragId: string, hoverId: string) => {
+        setImageItems(prev => {
+            const current = [...prev];
+            const dragIndex = current.findIndex(it => it.id === dragId);
+            const hoverIndex = current.findIndex(it => it.id === hoverId);
+            if (dragIndex === -1 || hoverIndex === -1 || dragIndex === hoverIndex) {
+                return prev;
+            }
+            const updated = [...current];
+            const [removed] = updated.splice(dragIndex, 1);
+            updated.splice(hoverIndex, 0, removed);
+            return updated;
+        });
+    }, []);
 
     return {
         imageItems,
@@ -73,6 +87,7 @@ export const useImages = () => {
         deleteImage,
         updateImageTitle,
         updateImageNotes,
-        updateImage
+        updateImage,
+        moveImage
     };
 }; 

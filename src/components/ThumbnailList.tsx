@@ -12,7 +12,8 @@ const ThumbnailList = ({
   setSelectedImageId,
   addImage,
   deleteImage,
-  editImage
+  editImage,
+  moveImage
 }: {
   imageItemsWithTags: any[];
   selectedImageId: string | null;
@@ -20,6 +21,7 @@ const ThumbnailList = ({
   addImage: (base64: string, title: string) => void;
   deleteImage: (id: string) => void;
   editImage: (id: string, newImageBase64: string) => void;
+  moveImage: (dragId: string, hoverId: string) => void;
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const editFileInputRef = useRef<HTMLInputElement>(null);
@@ -98,9 +100,10 @@ const ThumbnailList = ({
         onSelect={setSelectedImageId}
         onEdit={handleEditImage}
         onDelete={deleteImage}
+        onMove={moveImage}
       />
     ));
-  }, [imageItemsWithTags, selectedImageId, setSelectedImageId, handleEditImage, deleteImage]);
+  }, [imageItemsWithTags, selectedImageId, setSelectedImageId, handleEditImage, deleteImage, moveImage]);
 
   return (
     <div className="w-64 shrink-0 flex flex-col bg-white h-full border border-gray-200 overflow-hidden">

@@ -1,4 +1,5 @@
-import { useState, useCallback, memo } from 'react';
+import { useState, useCallback, memo, useRef } from 'react';
+import { useDrag, useDrop } from 'react-dnd';
 import { Button } from './ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { MoreHorizontal } from 'lucide-react';
@@ -13,6 +14,7 @@ interface ThumbnailItemProps {
     onSelect: (id: string) => void;
     onEdit: (id: string) => void;
     onDelete: (id: string) => void;
+    onMove: (dragId: string, hoverId: string) => void;
 }
 
 const ThumbnailItem: React.FC<ThumbnailItemProps> = memo(({
@@ -20,9 +22,27 @@ const ThumbnailItem: React.FC<ThumbnailItemProps> = memo(({
     isSelected,
     onSelect,
     onEdit,
-    onDelete
+    onDelete,
+    onMove
 }) => {
     const [openMenu, setOpenMenu] = useState(false);
+    const ref = useRef<HTMLDivElement>(null);
+
+    const [{ isDragging }, drag] = useDrag(() => ({
+        type: 'THUMBNAIL_ITEM',
+        item: { id: img.id },
+        collect: (monitor) => ({ isDragging: monitor.isDragging() })
+    }), [img.id]);
+
+    const [, drop] = useDrop(() => ({
+        accept: 'THUMBNAIL_ITEM',
+        hover: (item: { id: string }) => {
+            if (!ref.current || item.id === img.id) return;
+            onMove(item.id, img.id);
+        }
+    }), [img.id, onMove]);
+
+    drag(drop(ref));
 
     const handleSelect = useCallback(() => {
         onSelect(img.id);
@@ -48,7 +68,8 @@ const ThumbnailItem: React.FC<ThumbnailItemProps> = memo(({
         <div
             className={`rounded-s cursor-pointer flex flex-col gap-1 p-0 hover:bg-purple-50 transition ${isSelected ? 'bg-purple-100 border-2 border-purple-400' : ''}`}
             onClick={handleSelect}
-            style={{ position: 'relative' }}
+            style={{ position: 'relative', opacity: isDragging ? 0.6 : 1 }}
+            ref={ref}
         >
             <>
                 <img
