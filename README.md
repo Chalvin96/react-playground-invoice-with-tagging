@@ -1,69 +1,73 @@
-# React + TypeScript + Vite
+### Image Tagging Playground
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A playground to try Vite, shadcn/tailwind, and react-dnd. An invoice builder dashboard with image tagging to show location of item in invoice. 
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Features
+- Upload images (no backend, file uploaded as blob)
 
-## Expanding the ESLint configuration
+    <img src="docs/screenshot/dashboard.png" alt="Dashboard" width="500" />
+- Adding tag on image to show location of item in invoice. Using percentage x/y to prevent position change on different screen size
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+    <img src="docs/screenshot/add-tag.gif" alt="Add tag" width="500" />
+- Dragable thumbnail (with react-dnd) with tag number update. Tag inside image is also draggable
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+    <img src="docs/screenshot/thumbnail-drag.gif" alt="Thumbnail drag" width="500" />
+- Support print mode to get clean invoice without unnecessary component like footer 
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+    <img src="docs/screenshot/invoice.png" alt="Invoice" width="400" />
+    <img src="docs/screenshot/print-view.png" alt="Print view" width="600" />
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+
+### Getting started
+1) Install dependencies
+
+```bash
+yarn
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2) Run the dev server
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+yarn dev
 ```
+
+3) Build for production
+
+```bash
+yarn build
+```
+
+4) Preview production build
+
+```bash
+yarn preview
+```
+
+
+### How it works
+- Images
+  - Stored as blob/object URLs for simplicity (no uploads to a server)
+  - Old blob URLs are revoked on replace/delete to avoid memory leaks
+
+- Thumbnails
+  - Reordered via drag handle; persistent order in memory via `order`
+
+- Tags and items
+  - Click the image to add a tag (x/y in %), which opens the add-item dialog
+  - Tag numbers reindex when image order changes
+
+- Invoice
+
+  - Print CSS avoids row splits and repeats the header per page
+
+### Project structure
+- `src/components/` UI components (thumbnails, dialogs, invoice, image with tags)
+- `src/hooks/` stateful logic (`useImages`, `useTags`, `useItems`)
+- `src/types/` shared TypeScript types (`image.ts`, `tag.ts`)
+- `src/constants.ts` shared constants (e.g., max upload size)
+- `src/index.css` Tailwind and print styles
+
+### Notes
+- In-memory only. Refreshing clears images/tags/items.
+- Blob URLs reference local files; nothing is uploaded.
