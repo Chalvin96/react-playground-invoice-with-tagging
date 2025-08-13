@@ -13,6 +13,7 @@ export const useImages = () => {
     const [imageItems, setImageItems] = useState<ImageItem[]>([]);
 
     const addImage = useCallback((imageBase64: string, title: string = '') => {
+        console.log('useImages ADDING IMAGE', imageBase64, title);
         const newImageItem: ImageItem = {
             id: uuidv4(),
             imageBase64,

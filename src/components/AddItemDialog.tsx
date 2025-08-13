@@ -21,13 +21,7 @@ const AddItemDialog = memo(({
   onOpenChange,
   onSave,
   onCancel
-}: {
-  open: boolean;
-  itemData: ItemData | null;
-  onOpenChange: (open: boolean) => void;
-  onSave: (data: ItemData) => void;
-  onCancel: () => void;
-}) => {
+}: AddItemDialogProps) => {
   const [editData, setEditData] = useState<ItemData>(itemData || {
     name: '',
     type: 'Product',

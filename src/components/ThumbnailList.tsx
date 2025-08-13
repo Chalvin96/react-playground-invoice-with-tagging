@@ -26,9 +26,10 @@ const ThumbnailList = ({
 
   const handleFileSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    console.log('file', file);
     if (file) {
       const reader = new FileReader();
-
+      console.log('READING', file);
       // Add image as base64 url for simplification
       // Otherwise upload to s3 + add CDN
       reader.onload = (e) => {

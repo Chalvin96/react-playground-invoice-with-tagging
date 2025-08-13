@@ -21,13 +21,7 @@ const EditItemDialog = memo(({
   onOpenChange,
   onSave,
   onDelete
-}: {
-  open: boolean;
-  itemData: ItemData | null;
-  onOpenChange: (open: boolean) => void;
-  onSave: (data: ItemData) => void;
-  onDelete: () => void;
-}) => {
+}: EditItemDialogProps) => {
   const [editData, setEditData] = useState<ItemData>(itemData || {
     name: '',
     type: 'Product',
@@ -81,8 +75,7 @@ const EditItemDialog = memo(({
       length: newType === 'Service' ? 0 : prev.length,
       width: newType === 'Service' ? 0 : prev.width,
       height: newType === 'Service' ? 0 : prev.height,
-      // Reset quantity to 1 if switching to Product
-      quantity: newType === 'Product' ? (prev.quantity || 1) : 1
+
     }));
   }, []);
 
